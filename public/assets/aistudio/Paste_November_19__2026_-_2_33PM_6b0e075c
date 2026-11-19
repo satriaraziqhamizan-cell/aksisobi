@@ -1,0 +1,2567 @@
+Oke, sekarang kita buat **blueprint lengkap website Aksi Sobat Bumi** yang bisa kamu jadikan satu prompt utama di Google AI Studio. Aku akan susun dari konsep, tampilan, alur pengguna, database, dashboard admin, QR Code, kartu fisik, sampai cara website bekerja.
+
+Kita jangan langsung membuat website yang hanya bagus tampilannya, tetapi membangun **sistem yang benar-benar berfungsi**, sehingga data peserta, foto, tanaman, QR, kartu, dan halaman personal saling terhubung.
+
+# BLUEPRINT WEBSITE — AKSI SOBAT BUMI
+## MY PLANT JOURNEY 🌱
+### *One Plant. One Story. One Greener Future.*
+
+---
+
+# 1. Konsep utama website
+
+Website ini merupakan platform digital untuk kegiatan lingkungan dan penanaman pohon Aksi Sobat Bumi.
+
+Setiap peserta kegiatan dapat memiliki **halaman perjalanan tanaman (Personal Plant Journey)** yang dibuat secara otomatis berdasarkan data peserta, foto, jenis tanaman, dan dokumentasi penanaman.
+
+Setiap peserta memiliki halaman unik, tetapi seluruh halaman menggunakan satu sistem template yang sama.
+
+Contohnya:
+
+- Peserta A menanam Tabebuya → halaman berisi Tabebuya.
+- Peserta B menanam Ketapang → halaman berisi Ketapang.
+- Peserta C menanam Mangga → halaman berisi Mangga.
+
+Admin tidak perlu membuat halaman baru secara manual untuk setiap peserta.
+
+Sistem cukup mengambil data dari database, kemudian menampilkannya pada template website.
+
+### Nama platform
+
+**MY PLANT JOURNEY**
+
+Alternatif nama yang bisa digunakan:
+
+- My Plant Journey
+- Grow With Us
+- Plant Your Story
+- Roots of Tomorrow
+- My Green Legacy
+
+Rekomendasiku: **My Plant Journey**, karena mudah dipahami, personal, dan sesuai dengan konsep peserta yang memiliki halaman perjalanan tanaman sendiri.
+
+---
+
+# 2. Tujuan website
+
+Website ini memiliki 5 tujuan utama:
+
+1. Menjadi pusat informasi digital kegiatan Aksi Sobat Bumi.
+2. Menyediakan pendaftaran volunteer dan akses informasi event.
+3. Membuat setiap peserta memiliki halaman tanaman personal.
+4. Menyediakan kartu tanaman digital dan fisik yang dilengkapi QR Code.
+5. Menjadi media edukasi mengenai tanaman dan dokumentasi perjalanan pertumbuhan tanaman.
+
+---
+
+# 3. Struktur keseluruhan website
+
+Website dibagi menjadi 4 sistem utama.
+
+| Sistem | Fungsi |
+|---|---|
+| Public Landing Page | Halaman utama Sobat Bumi |
+| My Plant Journey | Halaman personal peserta dan tanaman |
+| Plant Database | Database informasi tanaman |
+| Admin Dashboard | Mengelola peserta, tanaman, foto, kartu, QR, dan halaman |
+
+Struktur alur:
+
+```text
+                    WEBSITE SOBAT BUMI
+                           │
+             ┌─────────────┴─────────────┐
+             │                           │
+             ▼                           ▼
+       PUBLIC WEBSITE              ADMIN DASHBOARD
+             │                           │
+      ┌──────┼───────┐           ┌────────┼─────────┐
+      │      │       │           │        │         │
+      ▼      ▼       ▼           ▼        ▼         ▼
+   EVENT  VOLUNTEER  MY       DATA     PLANT     CARD
+                    PLANT      PESERTA  DATABASE  GENERATOR
+                    JOURNEY
+                      │
+                      ▼
+               PERSONAL PAGE
+                      │
+                      ▼
+               UNIQUE QR CODE
+```
+
+---
+
+# 4. PUBLIC WEBSITE — HALAMAN UTAMA
+
+Ini adalah website yang dapat dibuka oleh siapa saja melalui Linktree maupun link langsung.
+
+## SECTION 01 — HERO SECTION
+
+### Tujuan
+Memberikan kesan pertama yang kuat, modern, natural, dan mengundang pengunjung untuk terlibat.
+
+### Visual
+- Full-screen atau hampir full-screen.
+- Background foto alam, penanaman pohon, tanah, daun, hutan, atau tangan memegang bibit.
+- Overlay dark green agar tulisan terbaca.
+- Animasi sederhana saat website dibuka.
+- Scroll indicator.
+
+### Konten
+
+**AKSI SOBAT BUMI**
+
+> SMALL ACTIONS,  
+> GREENER FUTURE.
+
+Bersama bergerak, bertumbuh, dan menciptakan aksi nyata untuk bumi yang lebih baik.
+
+Tombol:
+
+- `JOIN OUR MOVEMENT`
+- `MY PLANT JOURNEY`
+
+### Desain
+Jangan tampilkan terlalu banyak tombol pada hero.
+
+Hero harus terasa seperti website campaign lingkungan profesional, bukan website dashboard.
+
+---
+
+# 5. SECTION 02 — ABOUT OUR MOVEMENT
+
+Bagian pengenalan gerakan Aksi Sobat Bumi.
+
+### Heading
+
+**We Believe Every Action Matters.**
+
+### Konten
+
+Jelaskan bahwa Aksi Sobat Bumi merupakan gerakan yang mengajak individu untuk mengambil bagian dalam aksi nyata menjaga lingkungan, membangun kesadaran, dan menciptakan dampak positif melalui kegiatan berkelanjutan.
+
+### Visual
+
+- Foto aktivitas lingkungan.
+- Penanaman pohon.
+- Volunteer.
+- Dokumentasi kegiatan.
+
+### Layout
+
+Desktop:
+- Kiri: tulisan.
+- Kanan: foto kegiatan.
+
+Mobile:
+- Foto.
+- Judul.
+- Deskripsi.
+
+---
+
+# 6. SECTION 03 — OUR MOVEMENT / ACTIVITIES
+
+Menampilkan kegiatan Sobat Bumi.
+
+Contoh card kegiatan:
+
+### GREEN ACTION
+
+Foto kegiatan.
+
+**Planting for Tomorrow**
+
+Tanggal kegiatan.
+
+Deskripsi singkat.
+
+Tombol:
+
+`EXPLORE EVENT`
+
+Kegiatan dapat diisi dan dikelola melalui admin.
+
+Fitur:
+- Tambah kegiatan.
+- Edit kegiatan.
+- Upload foto.
+- Tanggal.
+- Lokasi.
+- Deskripsi.
+- Status event.
+
+Status:
+
+- Upcoming
+- Ongoing
+- Completed
+
+---
+
+# 7. SECTION 04 — OPEN RECRUITMENT VOLUNTEER
+
+Bagian ini khusus untuk perekrutan volunteer.
+
+### Heading
+
+**Be Part of the Change.**
+
+### Deskripsi
+
+> Small actions become meaningful when we grow and move together. Join our team and become part of a movement that creates positive impact for the environment.
+
+Tombol:
+
+`JOIN AS VOLUNTEER`
+
+Tombol mengarah ke Google Form atau formulir pendaftaran yang ditentukan admin.
+
+Admin dapat mengganti link formulir tanpa mengubah kode website.
+
+---
+
+# 8. SECTION 05 — MY PLANT JOURNEY
+
+Ini adalah fitur utama website.
+
+Bagian ini harus menjadi salah satu bagian paling menarik dari landing page.
+
+### Heading
+
+# EVERY PLANT HAS A STORY.
+
+> A living reminder of your contribution to a greener future.
+
+Tampilkan preview kartu tanaman digital.
+
+Misalnya:
+
+- Foto tanaman.
+- Nama tanaman.
+- Plant ID.
+- Nama event.
+- Preview kartu.
+
+Tombol:
+
+### `DISCOVER YOUR PLANT`
+
+Ketika diklik, pengguna masuk ke halaman pencarian kartu tanaman.
+
+---
+
+# 9. HALAMAN PENCARIAN KARTU TANAMAN
+
+URL contoh:
+
+`/my-plant`
+
+Halaman ini memiliki tampilan minimalis.
+
+### Heading
+
+**Find Your Plant Journey**
+
+> Enter your plant ID and discover the story behind your planting journey.
+
+### Input
+
+Label:
+
+**Your Plant ID**
+
+Placeholder:
+
+`SB26-0001`
+
+Tombol:
+
+`FIND MY PLANT`
+
+### Alur
+
+1. Pengguna membuka halaman My Plant Journey.
+2. Memasukkan kode unik.
+3. Sistem memeriksa kode di database.
+4. Jika valid, halaman personal tanaman terbuka.
+5. Jika tidak valid, tampilkan pesan kesalahan yang jelas.
+
+Pesan error:
+
+> We couldn't find your Plant ID. Please check your code and try again.
+
+Jangan tampilkan data peserta lain ketika kode tidak valid.
+
+---
+
+# 10. PERSONAL PLANT JOURNEY — HALAMAN PESERTA
+
+Ini bagian yang kamu bayangkan sebagai website bergulir dari atas sampai bawah.
+
+Setiap peserta mempunyai halaman unik.
+
+Contoh URL:
+
+`/plant/SB26-0001`
+
+Semua halaman menggunakan layout yang sama, tetapi datanya berbeda.
+
+---
+
+## SECTION 01 — PERSONAL HERO
+
+### Visual
+
+- Background foto alam.
+- Dark overlay.
+- Nama peserta sebagai judul.
+- Nama tanaman.
+- Plant ID.
+- Efek animasi ringan.
+
+### Contoh
+
+**SATRIA RAZIQ HAMIZAN**
+
+*My Plant Journey*
+
+> A little action today, a greener tomorrow.
+
+Plant ID:
+
+`SB26-0001`
+
+Scroll indicator:
+
+`DISCOVER MY JOURNEY ↓`
+
+Jangan terlalu banyak elemen pada section pertama.
+
+---
+
+# 11. SECTION 02 — ME & MY PLANT
+
+Ini adalah layout dua kolom.
+
+### KIRI
+
+Foto peserta bersama tanaman.
+
+Foto ini dapat di-upload oleh peserta ketika melakukan pendaftaran atau oleh admin saat mengelola data.
+
+### KANAN
+
+**MEET MY PLANT**
+
+Satria Raziq Hamizan
+
+My plant:
+
+**TABEBUYA**
+
+Scientific name:
+
+*Handroanthus chrysotrichus*
+
+Plant ID:
+
+`SB26-0001`
+
+Planting date:
+
+`19 November 2026`
+
+Location:
+
+`Lokasi kegiatan`
+
+### Desain
+
+- Foto besar.
+- Border minimalis.
+- Layout editorial.
+- Typography modern.
+- Warna cream dan hijau.
+- Animasi muncul perlahan saat scroll.
+
+Foto peserta dan tanaman harus menjadi bagian penting dari layout, bukan sekadar thumbnail.
+
+---
+
+# 12. SECTION 03 — THE BEGINNING OF MY JOURNEY
+
+Bagian dokumentasi awal tanaman.
+
+### Heading
+
+**EVERYTHING STARTS WITH A SEED.**
+
+Foto utama:
+
+Foto tanaman saat pertama ditanam.
+
+Informasi:
+
+- Planting Day
+- Tanggal penanaman
+- Lokasi
+- Jenis tanaman
+
+Caption:
+
+> Every great journey begins with a small beginning.
+
+Admin dapat meng-upload foto penanaman yang berbeda untuk setiap peserta.
+
+---
+
+# 13. SECTION 04 — MY PLANT GROWTH
+
+Bagian untuk menampilkan perkembangan tanaman dari waktu ke waktu.
+
+### Heading
+
+**GROWING THROUGH TIME**
+
+Buat tampilan timeline vertikal atau horizontal.
+
+Contoh:
+
+### DAY 01
+**The Beginning**
+
+Foto tanaman saat pertama ditanam.
+
+Tanggal dokumentasi.
+
+---
+
+### DAY 30
+**First Growth**
+
+Foto perkembangan tanaman.
+
+---
+
+### DAY 90
+**Growing Stronger**
+
+Foto perkembangan terbaru.
+
+---
+
+### DAY 180
+**A Growing Legacy**
+
+Foto tanaman setelah lebih lama tumbuh.
+
+Tanggal dan deskripsi.
+
+### Ketentuan
+
+Jangan mengarang dokumentasi perkembangan tanaman.
+
+Jika belum ada data, tampilkan section yang elegan:
+
+> Every journey takes time.  
+> This plant's growth story has just begun.
+
+Admin dapat menambahkan dokumentasi kapan saja.
+
+Sistem harus otomatis mengurutkan dokumentasi berdasarkan tanggal.
+
+---
+
+# 14. SECTION 05 — GET TO KNOW MY PLANT
+
+Ini adalah section edukasi.
+
+Informasi tanaman diambil dari master database tanaman.
+
+### Heading
+
+**GET TO KNOW MY PLANT**
+
+Contoh:
+
+# TABEBUYA
+
+*Handroanthus chrysotrichus*
+
+Foto tanaman.
+
+### Plant Overview
+
+Deskripsi umum tanaman.
+
+### Plant Characteristics
+
+- Jenis tanaman.
+- Karakteristik.
+- Bentuk daun.
+- Ciri khas.
+- Habitat.
+
+### Why This Plant Matters
+
+Manfaat dan peran tanaman bagi lingkungan, berdasarkan informasi yang telah diverifikasi.
+
+### Plant Care Guide
+
+Informasi dasar perawatan.
+
+- Kebutuhan air.
+- Kondisi cahaya.
+- Kondisi tanah.
+- Cara perawatan.
+- Catatan pertumbuhan.
+
+Informasi ini harus dikelola admin dan dapat digunakan ulang oleh semua peserta yang menanam jenis tanaman yang sama.
+
+---
+
+# 15. SECTION 06 — MY PLANT CARD
+
+Bagian untuk menampilkan kartu tanaman digital.
+
+Kartu ini memiliki dua sisi.
+
+## FRONT CARD
+
+Informasi:
+
+- Logo Sobat Bumi.
+- Foto tanaman.
+- Nama tanaman.
+- Nama peserta (opsional).
+- Plant ID.
+- Nama event.
+- Tahun.
+
+Contoh:
+
+```text
+╭───────────────────────────╮
+│      AKSI SOBAT BUMI    │
+│                           │
+│       [PLANT PHOTO]       │
+│                           │
+│       MY PLANT CARD       │
+│         TABEBUYA          │
+│                           │
+│       SB26-0001           │
+│                           │
+│     GROW WITH NATURE      │
+╰───────────────────────────╯
+```
+
+## BACK CARD
+
+Informasi:
+
+- QR Code.
+- Plant ID.
+- Nama peserta (opsional).
+- Nama tanaman.
+- Tanggal penanaman.
+- Tulisan `SCAN TO DISCOVER MY PLANT`.
+
+QR Code mengarah ke halaman personal tanaman.
+
+---
+
+# 16. INTERAKSI KARTU
+
+Pada website personal, kartu dapat ditampilkan seperti kartu koleksi.
+
+Jika memungkinkan:
+
+- Tampilan front.
+- Tombol untuk melihat back.
+- Animasi flip saat kartu diklik.
+
+Namun animasi harus ringan dan tidak mengganggu mobile.
+
+Jika fitur flip sulit diterapkan, tampilkan kartu depan dan belakang berdampingan saat desktop, dan stacked saat mobile.
+
+---
+
+# 17. SECTION 07 — PERSONAL MESSAGE
+
+Setiap peserta dapat memiliki pesan personal.
+
+Contoh:
+
+> I planted this tree with the hope that future generations will continue to enjoy a greener world.
+
+Pesan dapat berasal dari:
+
+- Input peserta saat registrasi.
+- Input admin.
+- Pesan default apabila peserta tidak mengisi.
+
+Jangan memaksa peserta menulis pesan.
+
+Jika tidak ada pesan, gunakan pesan default:
+
+> One small action can grow into something meaningful.
+
+---
+
+# 18. SECTION 08 — CLOSING
+
+Bagian terakhir halaman personal.
+
+Background foto alam atau gradient hijau.
+
+### ONE TREE.
+### ONE ACTION.
+### ONE BETTER FUTURE.
+
+> Thank you for being part of this journey.
+
+**AKSI SOBAT BUMI**
+
+Instagram  
+Our Movement
+
+---
+
+# 19. SISTEM ADMIN DASHBOARD
+
+Admin adalah pengguna yang mengelola seluruh isi website.
+
+Admin harus memiliki login.
+
+Jangan menyediakan dashboard pengelolaan data yang dapat diakses publik.
+
+## Dashboard Home
+
+Menampilkan statistik:
+
+| Statistik | Isi |
+|---|---|
+| Total Participants | Jumlah peserta |
+| Total Plants | Jumlah jenis tanaman |
+| Total Plant Records | Jumlah tanaman yang terdaftar untuk peserta |
+| Total Growth Updates | Jumlah dokumentasi perkembangan |
+| Total Events | Jumlah event |
+
+Dashboard juga dapat menampilkan:
+
+- Peserta terbaru.
+- Data tanaman terbaru.
+- Aktivitas admin.
+- Tombol cepat tambah peserta.
+- Tombol cepat tambah tanaman.
+
+---
+
+# 20. ADMIN — PARTICIPANT MANAGEMENT
+
+Menu:
+
+**Participants**
+
+Fitur:
+
+- Tambah peserta.
+- Edit peserta.
+- Hapus peserta.
+- Cari peserta.
+- Filter event.
+- Upload foto.
+- Generate Plant ID.
+- Melihat halaman personal.
+- Download kartu.
+
+### Data peserta
+
+| Field | Wajib |
+|---|---|
+| Participant ID | Otomatis |
+| Plant ID | Otomatis |
+| Nama | Ya |
+| Foto peserta | Opsional |
+| Event | Ya |
+| Pesan personal | Opsional |
+| Tanggal registrasi | Otomatis |
+
+Plant ID harus unik.
+
+Contoh format:
+
+`SB26-0001`
+
+`SB26-0002`
+
+`SB26-0003`
+
+Jangan membuat ID berdasarkan nama peserta karena nama bisa sama.
+
+---
+
+# 21. ADMIN — PLANT DATABASE
+
+Menu:
+
+**Plants**
+
+Admin dapat mengelola master tanaman.
+
+### Form tambah tanaman
+
+- Nama tanaman.
+- Nama ilmiah.
+- Kategori.
+- Foto utama.
+- Deskripsi.
+- Karakteristik.
+- Manfaat.
+- Habitat.
+- Panduan perawatan.
+- Informasi tambahan.
+
+### Contoh database
+
+| Plant ID | Nama | Nama ilmiah |
+|---|---|---|
+| PL-001 | Tabebuya | Handroanthus chrysotrichus |
+| PL-002 | Ketapang | Terminalia catappa |
+| PL-003 | Mangga | Mangifera indica |
+| PL-004 | Trembesi | Samanea saman |
+
+Admin dapat menambahkan tanaman baru tanpa mengubah kode website.
+
+---
+
+# 22. ADMIN — PLANTING RECORDS
+
+Ini adalah fitur untuk menghubungkan peserta dengan tanaman yang ditanam.
+
+Menu:
+
+**Plant Records**
+
+Form:
+
+- Pilih peserta.
+- Plant ID otomatis terisi.
+- Pilih jenis tanaman.
+- Tanggal penanaman.
+- Lokasi.
+- Upload foto tanaman.
+- Upload foto peserta bersama tanaman.
+- Deskripsi.
+- Status dokumentasi.
+
+Satu peserta dapat memiliki satu atau lebih record jika sistem di masa depan mendukung beberapa tanaman untuk satu peserta.
+
+Untuk versi pertama, sebaiknya setiap peserta memiliki satu tanaman utama agar alur sederhana.
+
+---
+
+# 23. ADMIN — GROWTH UPDATES
+
+Menu:
+
+**Growth Updates**
+
+Admin dapat menambahkan dokumentasi perkembangan tanaman.
+
+Form:
+
+- Pilih Plant Record.
+- Tanggal dokumentasi.
+- Upload foto.
+- Judul.
+- Deskripsi.
+- Catatan.
+
+Contoh:
+
+| Tanggal | Dokumentasi | Catatan |
+|---|---|---|
+| 19 Nov | Foto awal | Hari penanaman |
+| 19 Des | Foto perkembangan | Dokumentasi bulan pertama |
+| 19 Feb | Foto perkembangan | Pemantauan berkala |
+
+Data ditampilkan secara otomatis pada timeline halaman personal.
+
+---
+
+# 24. ADMIN — TEMPLATE CARD GENERATOR
+
+Ini fitur penting.
+
+Admin dapat mengatur template kartu.
+
+Contoh:
+
+### TEMPLATE 01 — FOREST
+
+- Background hijau gelap.
+- Cream typography.
+- Foto tanaman.
+- Plant ID.
+- Logo.
+
+### TEMPLATE 02 — BOTANICAL
+
+- Background cream.
+- Border olive.
+- Layout minimalis.
+- Foto tanaman dominan.
+
+### TEMPLATE 03 — EARTH EDITION
+
+- Earth tone.
+- Foto tanaman.
+- Informasi minimal.
+
+Untuk MVP, cukup buat **satu template yang matang dan bisa digunakan**. Template lainnya bisa ditambahkan setelah sistem utama berfungsi.
+
+---
+
+# 25. ADMIN — GENERATE PLANT CARD
+
+Admin membuka detail peserta.
+
+Kemudian:
+
+1. Memilih template.
+2. Melihat preview kartu depan.
+3. Melihat preview kartu belakang.
+4. QR Code otomatis dihasilkan.
+5. Admin memilih download.
+
+Output:
+
+- PDF kartu depan-belakang.
+- PNG preview jika memungkinkan.
+- QR Code PNG.
+- Personal page URL.
+
+Kartu harus disiapkan untuk cetak dengan ukuran yang dapat ditentukan.
+
+### Ukuran rekomendasi awal
+
+Ukuran kartu:
+
+**85,6 × 54 mm**
+
+Kurang lebih ukuran kartu ID standar.
+
+Sediakan layout print dengan:
+
+- Front.
+- Back.
+- Margin aman.
+- Resolusi memadai.
+- Tidak memotong QR.
+- QR dapat dipindai setelah dicetak.
+
+Ukuran dan format print perlu diuji sebelum produksi massal.
+
+---
+
+# 26. SISTEM QR CODE
+
+Setiap peserta memiliki QR unik.
+
+QR tidak berisi semua informasi tanaman.
+
+QR hanya mengarah ke URL personal.
+
+Contoh:
+
+`https://domainkamu.com/plant/SB26-0001`
+
+Ketika QR dipindai:
+
+1. Browser membuka URL.
+2. Sistem membaca ID.
+3. Database mencari record.
+4. Template mengambil data peserta.
+5. Template mengambil data tanaman.
+6. Template mengambil dokumentasi perkembangan.
+7. Website personal ditampilkan.
+
+QR Code tidak perlu dibuat ulang jika data tanaman berubah.
+
+---
+
+# 27. FORM PENGISIAN DATA PESERTA
+
+Kita bisa menyediakan dua metode.
+
+### METODE A — ADMIN INPUT
+
+Admin mengisi data peserta dan mengunggah foto.
+
+Kelebihan:
+- Data lebih terkontrol.
+- Cocok untuk event yang dokumentasinya dikumpulkan oleh panitia.
+
+### METODE B — PESERTA INPUT
+
+Peserta membuka form dan mengisi:
+
+- Nama.
+- Kode peserta.
+- Foto diri bersama tanaman.
+- Foto tanaman.
+- Jenis tanaman.
+- Tanggal penanaman.
+- Pesan personal.
+
+Data masuk ke sistem dan menunggu persetujuan admin.
+
+### Rekomendasi
+
+Untuk versi pertama, gunakan **Admin Input**.
+
+Setelah website berfungsi, baru tambahkan fitur peserta upload sendiri.
+
+Alasannya:
+- Mengurangi spam.
+- Menghindari foto yang salah.
+- Menghindari duplikasi ID.
+- Admin bisa memeriksa data sebelum halaman dipublikasikan.
+
+---
+
+# 28. SISTEM STATUS HALAMAN
+
+Setiap halaman tanaman memiliki status.
+
+| Status | Fungsi |
+|---|---|
+| Draft | Data belum dipublikasikan |
+| Published | Halaman dapat diakses |
+| Archived | Halaman disimpan, tetapi tidak ditampilkan dalam pencarian umum |
+
+QR Code dapat dibuat saat record disiapkan, tetapi halaman personal sebaiknya baru dapat dilihat publik ketika admin mengubah status menjadi **Published**.
+
+---
+
+# 29. STRUKTUR DATABASE
+
+Gunakan database relasional.
+
+## TABLE: USERS
+
+Untuk admin.
+
+```text
+id
+name
+email
+password_hash
+role
+created_at
+```
+
+## TABLE: EVENTS
+
+```text
+id
+event_name
+event_slug
+event_date
+event_location
+description
+registration_url
+cover_image
+status
+created_at
+```
+
+## TABLE: PARTICIPANTS
+
+```text
+id
+participant_code
+name
+photo
+personal_message
+event_id
+created_at
+```
+
+## TABLE: PLANTS
+
+```text
+id
+plant_code
+plant_name
+scientific_name
+category
+main_image
+description
+characteristics
+benefits
+habitat
+care_guide
+created_at
+```
+
+## TABLE: PLANT_RECORDS
+
+```text
+id
+participant_id
+plant_id
+plant_id_code
+planting_date
+location
+plant_photo
+participant_plant_photo
+description
+template_id
+status
+created_at
+```
+
+## TABLE: GROWTH_UPDATES
+
+```text
+id
+plant_record_id
+update_date
+photo
+title
+description
+created_at
+```
+
+## TABLE: CARD_TEMPLATES
+
+```text
+id
+template_name
+template_description
+front_design
+back_design
+is_active
+created_at
+```
+
+## TABLE: QR_CODES
+
+```text
+id
+plant_record_id
+qr_url
+qr_image
+created_at
+```
+
+Struktur ini memungkinkan data peserta, tanaman, event, dan dokumentasi saling terhubung.
+
+---
+
+# 30. DESAIN UI/UX
+
+## Design Direction
+
+Nama:
+
+**ECO EDITORIAL — DIGITAL NATURE JOURNEY**
+
+Inspirasi:
+
+- Environmental campaign website.
+- Editorial magazine.
+- Sustainable branding.
+- Nature photography.
+- Minimalist digital storytelling.
+
+Jangan membuat website terlihat seperti admin template biasa di bagian public.
+
+---
+
+# 31. PALET WARNA
+
+Gunakan palet:
+
+| Warna | Hex | Penggunaan |
+|---|---|---|
+| Deep Forest | `#14271B` | Background utama |
+| Forest Green | `#284B34` | Section |
+| Moss Green | `#647C45` | Accent |
+| Leaf Lime | `#B4D36C` | Tombol |
+| Soft Cream | `#F4F0E4` | Background terang |
+| Warm White | `#FAF9F4` | Teks terang |
+| Earth Brown | `#765A3A` | Detail tanah |
+
+### Aturan
+
+- Jangan gunakan lime pada semua elemen.
+- Lime hanya untuk CTA dan highlight.
+- Gunakan cream untuk section terang.
+- Gunakan dark forest untuk hero.
+- Pastikan tulisan memiliki kontras tinggi.
+
+---
+
+# 32. TYPOGRAPHY
+
+Gunakan kombinasi maksimal 2 font.
+
+### Heading
+
+Font yang tegas, editorial, modern.
+
+Contoh:
+- DM Sans
+- Manrope
+- Plus Jakarta Sans
+
+### Body
+
+- DM Sans
+- Inter
+- Manrope
+
+Heading bisa memiliki ukuran besar, dengan line spacing yang nyaman.
+
+Jangan terlalu banyak menggunakan huruf kapital pada semua teks.
+
+---
+
+# 33. LAYOUT WEBSITE
+
+## Desktop
+
+- Max content width sekitar 1200 px.
+- Hero besar.
+- Section spacing lebar.
+- Foto dominan.
+- Grid 2–3 kolom jika diperlukan.
+
+## Mobile
+
+- Layout satu kolom.
+- Foto tidak terpotong secara tidak sengaja.
+- Button full width.
+- Font readable.
+- Navbar sederhana.
+- Animasi ringan.
+- Section tidak terlalu padat.
+
+Website harus dirancang mobile-first karena peserta kemungkinan besar membuka QR melalui HP.
+
+---
+
+# 34. ANIMASI
+
+Gunakan animasi ringan dan natural.
+
+Contoh:
+
+- Fade-in saat section masuk viewport.
+- Text reveal.
+- Floating leaf yang sangat subtle.
+- Smooth scrolling.
+- Card hover.
+- Flip card.
+- Parallax ringan jika performa memungkinkan.
+
+Hindari:
+
+- Animasi terlalu banyak.
+- Gerakan cepat.
+- Background video berat.
+- Animasi yang menghambat pembacaan.
+- Animasi yang membuat website lambat di HP.
+
+---
+
+# 35. TEKNOLOGI YANG DISARANKAN UNTUK GOOGLE AI STUDIO
+
+Karena kamu akan menggunakan Google AI Studio untuk menghasilkan website, kita bisa menggunakan stack modern yang cocok untuk aplikasi berbasis web.
+
+| Bagian | Teknologi |
+|---|---|
+| Frontend | React |
+| Language | TypeScript |
+| Styling | CSS / Tailwind CSS |
+| UI | Komponen reusable |
+| Database | Firebase Firestore |
+| Authentication | Firebase Authentication |
+| Image Storage | Firebase Storage |
+| Hosting | Firebase Hosting / deployment yang didukung |
+| QR Code | QR Code library |
+| PDF Card | PDF generation library |
+
+### Kenapa Firebase?
+
+Karena sistem ini membutuhkan:
+
+- Database peserta.
+- Upload foto.
+- Admin login.
+- Penyimpanan foto.
+- Halaman personal.
+- Data yang dapat diperbarui.
+- URL publik.
+
+Firebase dapat mengintegrasikan seluruh kebutuhan tersebut.
+
+Namun, database dan storage harus menggunakan aturan akses yang aman. Jangan menjadikan seluruh data peserta bebas dibaca atau diubah publik.
+
+---
+
+# 36. STRUKTUR FOLDER PROJECT
+
+AI Studio sebaiknya menghasilkan struktur project yang rapi, bukan seluruh kode ditumpuk dalam satu file.
+
+Contoh:
+
+```text
+src/
+│
+├── components/
+│   ├── Navbar.tsx
+│   ├── Footer.tsx
+│   ├── Hero.tsx
+│   ├── EventCard.tsx
+│   ├── PlantCard.tsx
+│   ├── GrowthTimeline.tsx
+│   ├── QRDisplay.tsx
+│   └── LoadingState.tsx
+│
+├── pages/
+│   ├── HomePage.tsx
+│   ├── MyPlantSearchPage.tsx
+│   ├── PlantJourneyPage.tsx
+│   ├── EventPage.tsx
+│   └── NotFoundPage.tsx
+│
+├── admin/
+│   ├── AdminLogin.tsx
+│   ├── Dashboard.tsx
+│   ├── ParticipantsPage.tsx
+│   ├── PlantsPage.tsx
+│   ├── PlantRecordsPage.tsx
+│   ├── GrowthUpdatesPage.tsx
+│   └── CardGeneratorPage.tsx
+│
+├── services/
+│   ├── firebase.ts
+│   ├── participantService.ts
+│   ├── plantService.ts
+│   ├── recordService.ts
+│   └── qrService.ts
+│
+├── types/
+│   ├── participant.ts
+│   ├── plant.ts
+│   └── plantRecord.ts
+│
+├── styles/
+│   ├── global.css
+│   └── variables.css
+│
+└── App.tsx
+```
+
+---
+
+# 37. ROUTING
+
+Website memiliki routing:
+
+| Route | Fungsi |
+|---|---|
+| `/` | Homepage |
+| `/events` | Daftar event |
+| `/events/:slug` | Detail event |
+| `/my-plant` | Cari Plant ID |
+| `/plant/:plantId` | Halaman personal tanaman |
+| `/admin/login` | Admin login |
+| `/admin/dashboard` | Dashboard |
+| `/admin/participants` | Data peserta |
+| `/admin/plants` | Database tanaman |
+| `/admin/plant-records` | Data penanaman |
+| `/admin/growth-updates` | Dokumentasi perkembangan |
+| `/admin/card-generator` | Generator kartu |
+
+---
+
+# 38. SECURITY
+
+Website harus memiliki:
+
+### Admin Authentication
+- Login admin.
+- Logout.
+- Proteksi dashboard.
+- Jangan menampilkan dashboard kepada pengguna umum.
+
+### Data Protection
+- Validasi upload foto.
+- Batas ukuran file.
+- Format file yang diizinkan.
+- Sanitasi input.
+- Proteksi terhadap akses tidak sah.
+- Jangan menyimpan password dalam bentuk plaintext.
+
+### Public Page
+- Pengunjung hanya dapat membaca halaman tanaman yang sudah Published.
+- Pengunjung tidak dapat mengedit data.
+- Pengunjung tidak dapat mengakses halaman admin.
+- Tidak boleh ada data sensitif peserta yang ditampilkan.
+
+### QR
+- QR mengarah ke URL yang aman.
+- Jangan memasukkan data pribadi sensitif ke dalam QR secara langsung.
+
+---
+
+# 39. MVP — VERSI PERTAMA YANG WAJIB BERFUNGSI
+
+Jangan membuat semua fitur sekaligus.
+
+Versi pertama harus menyelesaikan alur utama berikut:
+
+### ADMIN
+
+1. Login.
+2. Tambah tanaman.
+3. Tambah peserta.
+4. Upload foto peserta.
+5. Pilih jenis tanaman.
+6. Upload foto tanaman.
+7. Simpan data.
+8. Generate halaman personal.
+9. Generate QR Code.
+10. Preview kartu.
+11. Download kartu.
+
+### PUBLIC
+
+1. Homepage.
+2. My Plant Journey.
+3. Input Plant ID.
+4. Membuka halaman personal.
+5. Melihat foto peserta.
+6. Melihat tanaman.
+7. Melihat informasi tanaman.
+8. Melihat QR/kartu.
+9. Melihat dokumentasi perkembangan.
+
+---
+
+# 40. FITUR LANJUTAN (JANGAN DIBUAT DULU)
+
+Setelah MVP berjalan, baru tambahkan:
+
+- Peserta mengisi data sendiri.
+- Self-registration.
+- Verifikasi data admin.
+- Banyak template kartu.
+- Statistik pertumbuhan.
+- Map lokasi penanaman.
+- Monitoring tanaman.
+- Timeline multi-year.
+- Pengingat dokumentasi.
+- Galeri tanaman.
+- Event registration terintegrasi.
+- Download massal kartu.
+- Batch QR generation.
+
+Dengan begitu, AI Studio tidak mencoba membuat semuanya sekaligus dan berakhir dengan banyak fitur yang hanya berupa tombol dummy.
+
+---
+
+# 41. ALUR ADMIN SECARA DETAIL
+
+Misalnya admin ingin membuat kartu peserta bernama Satria.
+
+### STEP 1 — ADD PARTICIPANT
+
+Admin memasukkan:
+
+- Nama.
+- Event.
+- Foto peserta.
+
+### STEP 2 — SELECT PLANT
+
+Admin memilih:
+
+**Tabebuya**
+
+Informasi tanaman langsung diambil dari database.
+
+### STEP 3 — ADD PLANT RECORD
+
+Admin mengisi:
+
+- Tanggal.
+- Lokasi.
+- Foto tanaman.
+- Pesan personal.
+
+### STEP 4 — PREVIEW
+
+Sistem menampilkan:
+
+- Preview website.
+- Preview card front.
+- Preview card back.
+
+### STEP 5 — GENERATE
+
+Sistem menghasilkan:
+
+- Plant ID.
+- Personal URL.
+- QR Code.
+- Kartu.
+
+### STEP 6 — PUBLISH
+
+Admin klik:
+
+`PUBLISH PLANT JOURNEY`
+
+Halaman personal menjadi dapat diakses publik.
+
+---
+
+# 42. ALUR PENGGUNA SECARA DETAIL
+
+### PENGUNJUNG LINKTREE
+
+Klik:
+
+`MY PLANT JOURNEY`
+
+↓
+
+Masuk ke website.
+
+↓
+
+Klik:
+
+`DISCOVER YOUR PLANT`
+
+↓
+
+Masukkan Plant ID.
+
+↓
+
+Sistem validasi.
+
+↓
+
+Halaman personal terbuka.
+
+↓
+
+Scroll:
+
+1. Hero personal.
+2. Foto peserta dan tanaman.
+3. Plant story.
+4. Growth timeline.
+5. Plant information.
+6. Plant card.
+7. Personal message.
+8. Closing.
+
+### PENGUNJUNG YANG MEMEGANG KARTU
+
+Scan QR.
+
+↓
+
+URL personal terbuka.
+
+↓
+
+Langsung masuk ke halaman tanaman.
+
+Tidak perlu memasukkan ID lagi.
+
+---
+
+# 43. LINKTREE
+
+Linktree akan menjadi pintu masuk website.
+
+Susunan tombol yang disarankan:
+
+**AKSI SOBAT BUMI**
+
+Bio:
+
+> Small actions, greener future. 🌱  
+> Bersama bergerak untuk bumi yang lebih baik.
+
+Urutan link:
+
+1. 🌱 **My Plant Journey**
+2. 🌿 **Open Recruitment Volunteer**
+3. 🌍 **Explore Our Activities**
+4. 📸 **Instagram**
+5. ♻️ **About Sobat Bumi**
+
+Link `My Plant Journey` diarahkan ke halaman pencarian ID.
+
+---
+
+# 44. PROMPT UTAMA GOOGLE AI STUDIO
+
+Berikut prompt yang bisa kamu gunakan. Aku sengaja membuatnya sangat detail agar AI Studio memahami sistem, bukan hanya membuat landing page.
+
+Bertindaklah sebagai Senior Full-Stack Developer, UI/UX Designer, Software Architect, dan Product Designer.
+
+Saya ingin membangun sebuah website full-stack untuk program lingkungan Aksi Sobat Bumi dengan fitur utama bernama "My Plant Journey".
+
+Website ini bukan hanya landing page statis. Website harus memiliki sistem database, admin dashboard, pengelolaan peserta, database tanaman, upload foto, personal plant page, QR Code, serta plant card generator.
+
+==================================================
+1. PROJECT OVERVIEW
+==================================================
+
+Project name:
+AKSI SOBAT BUMI — MY PLANT JOURNEY
+
+Tagline:
+"One Plant. One Story. One Greener Future."
+
+Tujuan:
+Membuat platform digital yang memberikan identitas dan halaman personal kepada setiap peserta kegiatan penanaman pohon.
+
+Setiap peserta memiliki:
+- Unique Participant ID
+- Unique Plant ID
+- Foto peserta
+- Tanaman yang ditanam
+- Foto tanaman
+- Tanggal penanaman
+- Lokasi penanaman
+- Personal message
+- Plant information
+- Growth documentation
+- Personal website
+- Unique QR Code
+- Digital plant card
+
+Setiap halaman peserta harus dibuat otomatis berdasarkan database.
+
+Jangan membuat website terpisah untuk setiap peserta.
+
+Gunakan satu reusable template yang mengambil data dinamis berdasarkan Participant ID atau Plant ID.
+
+==================================================
+2. TECH STACK
+==================================================
+
+Gunakan teknologi modern dan struktur yang maintainable.
+
+Frontend:
+- React
+- TypeScript
+- Responsive design
+- Tailwind CSS atau CSS modular yang konsisten
+
+Backend/database:
+- Firebase Firestore
+
+Authentication:
+- Firebase Authentication untuk admin
+
+Image storage:
+- Firebase Storage
+
+Routing:
+- React Router
+
+QR Code:
+- QR Code library yang stabil
+
+PDF:
+- Library untuk menghasilkan kartu plant card dalam PDF
+
+Gunakan arsitektur komponen reusable.
+
+Jangan menumpuk seluruh kode dalam satu file.
+
+Jangan menggunakan mock data sebagai pengganti database permanen.
+
+Jika Firebase credentials belum tersedia, buat konfigurasi yang jelas dan dokumentasikan cara menghubungkannya. Jangan mengarang bahwa database sudah terhubung apabila belum.
+
+==================================================
+3. DESIGN DIRECTION
+==================================================
+
+Design concept:
+ECO EDITORIAL — DIGITAL NATURE JOURNEY
+
+Website harus terasa seperti:
+- Modern environmental campaign
+- Nature editorial website
+- Sustainable branding
+- Premium digital storytelling
+- Clean
+- Minimalist
+- Cinematic
+- Natural
+- Human-centered
+
+Jangan membuat website seperti template admin generik.
+
+Gunakan fotografi alam sebagai elemen visual utama.
+
+Color palette:
+
+Deep Forest:
+#14271B
+
+Forest Green:
+#284B34
+
+Moss Green:
+#647C45
+
+Leaf Lime:
+#B4D36C
+
+Soft Cream:
+#F4F0E4
+
+Warm White:
+#FAF9F4
+
+Earth Brown:
+#765A3A
+
+Gunakan Leaf Lime secara terbatas untuk tombol CTA, highlight, dan aksen.
+
+Gunakan background cream untuk beberapa section agar website memiliki variasi, jangan seluruh halaman berwarna hijau gelap.
+
+Typography:
+- Heading menggunakan font modern yang tegas.
+- Body menggunakan font yang mudah dibaca.
+- Maksimal dua font family.
+- Heading boleh besar dan editorial.
+- Hindari terlalu banyak uppercase.
+
+==================================================
+4. PUBLIC LANDING PAGE
+==================================================
+
+Route:
+/
+
+Buat landing page dengan section berikut:
+
+SECTION A — HERO
+
+Full-width cinematic nature background.
+
+Gunakan foto:
+- Penanaman pohon
+- Bibit
+- Hutan
+- Daun
+- Tanah
+- Tangan menanam
+
+Gunakan dark green overlay agar teks terbaca.
+
+Content:
+
+AKSI SOBAT BUMI
+
+SMALL ACTIONS,
+GREENER FUTURE.
+
+Bersama bergerak, bertumbuh, dan menciptakan aksi nyata untuk bumi yang lebih baik.
+
+CTA:
+- JOIN OUR MOVEMENT
+- MY PLANT JOURNEY
+
+Tambahkan smooth scroll indicator.
+
+SECTION B — ABOUT OUR MOVEMENT
+
+Heading:
+WE BELIEVE EVERY ACTION MATTERS.
+
+Berisi deskripsi tentang gerakan lingkungan Aksi Sobat Bumi.
+
+Layout:
+- Text
+- Environmental photography
+- Responsive layout
+
+SECTION C — OUR ACTIVITIES
+
+Menampilkan event/activity cards yang diambil dari database.
+
+Setiap event:
+- Cover image
+- Event name
+- Date
+- Location
+- Description
+- Status
+- Detail link
+
+SECTION D — VOLUNTEER
+
+Heading:
+BE PART OF THE CHANGE.
+
+Deskripsi singkat tentang bergabung dalam kegiatan lingkungan.
+
+CTA:
+JOIN AS VOLUNTEER
+
+Link pendaftaran harus dapat diubah admin melalui dashboard.
+
+SECTION E — MY PLANT JOURNEY
+
+Heading:
+EVERY PLANT HAS A STORY.
+
+Deskripsi:
+A living reminder of your contribution to a greener future.
+
+Tampilkan preview plant card.
+
+CTA:
+DISCOVER YOUR PLANT
+
+Arahkan ke route:
+ /my-plant
+
+SECTION F — CLOSING
+
+ONE TREE.
+ONE ACTION.
+ONE BETTER FUTURE.
+
+Footer:
+AKSI SOBAT BUMI
+
+Instagram
+About
+Contact
+
+==================================================
+5. MY PLANT SEARCH PAGE
+==================================================
+
+Route:
+/my-plant
+
+Design:
+Minimalist, premium, nature-themed.
+
+Heading:
+FIND YOUR PLANT JOURNEY
+
+Description:
+Enter your Plant ID and discover the story behind your planting journey.
+
+Input:
+Plant ID
+
+Placeholder:
+SB26-0001
+
+Button:
+FIND MY PLANT
+
+Logic:
+- Cari record berdasarkan Plant ID.
+- Jika ditemukan dan status Published, redirect ke personal plant page.
+- Jika tidak ditemukan, tampilkan error message.
+- Jangan membocorkan data peserta lain.
+- Tambahkan loading state.
+- Tambahkan empty state.
+- Validasi input.
+
+==================================================
+6. PERSONAL PLANT JOURNEY PAGE
+==================================================
+
+Route:
+/plant/:plantId
+
+Ini adalah halaman utama fitur.
+
+Semua peserta menggunakan template yang sama, tetapi konten diambil secara dinamis dari Firestore.
+
+Page harus berupa scrolling website yang terdiri dari beberapa section storytelling.
+
+SECTION 1 — PERSONAL HERO
+
+Background:
+Nature photography.
+
+Content:
+Nama peserta.
+
+My Plant Journey.
+
+Plant ID.
+
+Tagline:
+A little action today, a greener tomorrow.
+
+Scroll indicator.
+
+SECTION 2 — ME & MY PLANT
+
+Layout desktop:
+Two-column editorial layout.
+
+Left:
+Foto peserta bersama tanaman.
+
+Right:
+- Participant name
+- Plant name
+- Scientific name
+- Plant ID
+- Planting date
+- Location
+
+Layout mobile:
+Stacked layout.
+
+Foto harus besar dan berkualitas.
+
+SECTION 3 — THE BEGINNING
+
+Heading:
+EVERYTHING STARTS WITH A SEED.
+
+Menampilkan:
+- Foto tanaman saat penanaman
+- Tanggal
+- Lokasi
+- Deskripsi
+
+SECTION 4 — MY PLANT GROWTH
+
+Heading:
+GROWING THROUGH TIME.
+
+Menampilkan growth timeline berdasarkan data Growth Updates.
+
+Setiap timeline item:
+- Date
+- Photo
+- Title
+- Description
+
+Urutkan berdasarkan tanggal.
+
+Jika belum ada growth updates, tampilkan empty state yang tetap menarik:
+
+"Every journey takes time. This plant's growth story has just begun."
+
+Jangan membuat foto atau dokumentasi palsu.
+
+SECTION 5 — GET TO KNOW MY PLANT
+
+Ambil data dari master Plants collection.
+
+Tampilkan:
+- Plant name
+- Scientific name
+- Main image
+- Overview
+- Characteristics
+- Benefits
+- Habitat
+- Care guide
+
+Gunakan layout editorial.
+
+SECTION 6 — MY PLANT CARD
+
+Tampilkan digital card.
+
+Card front:
+- Sobat Bumi logo
+- Plant photo
+- Plant name
+- Participant name jika diaktifkan
+- Plant ID
+- Event
+- Year
+
+Card back:
+- QR Code
+- Plant ID
+- Plant name
+- Planting date
+- Scan to discover my plant
+
+Sediakan interaksi flip card yang ringan jika memungkinkan.
+
+Jika flip card kurang nyaman di mobile, tampilkan front dan back secara terpisah.
+
+SECTION 7 — PERSONAL MESSAGE
+
+Tampilkan personal message dari peserta.
+
+Jika kosong, gunakan pesan default:
+
+"One small action can grow into something meaningful."
+
+SECTION 8 — CLOSING
+
+ONE TREE.
+ONE ACTION.
+ONE BETTER FUTURE.
+
+Thank you for being part of this journey.
+
+AKSI SOBAT BUMI.
+
+==================================================
+7. ADMIN AUTHENTICATION
+==================================================
+
+Routes:
+
+/admin/login
+/admin/dashboard
+
+Buat sistem autentikasi admin menggunakan Firebase Authentication.
+
+Admin dashboard tidak boleh bisa diakses tanpa autentikasi.
+
+Jangan menyediakan public admin registration.
+
+Admin harus dapat:
+- Login
+- Logout
+- Mengakses dashboard
+- Mengelola peserta
+- Mengelola tanaman
+- Mengelola plant records
+- Mengelola growth updates
+- Generate plant card
+
+==================================================
+8. ADMIN DASHBOARD
+==================================================
+
+Route:
+/admin/dashboard
+
+Dashboard memiliki sidebar navigation.
+
+Menu:
+
+1. Dashboard
+2. Events
+3. Participants
+4. Plant Database
+5. Plant Records
+6. Growth Updates
+7. Card Generator
+8. Settings
+9. Logout
+
+Dashboard statistics:
+- Total participants
+- Total plant records
+- Total plant species
+- Total growth updates
+- Total events
+
+Tambahkan recent records.
+
+Design:
+Clean admin dashboard.
+Tetap gunakan identitas warna Sobat Bumi.
+Jangan gunakan tampilan admin yang terlalu ramai.
+
+==================================================
+9. PARTICIPANT MANAGEMENT
+==================================================
+
+Admin dapat:
+- Create participant
+- Edit participant
+- Delete participant
+- Search participant
+- Filter by event
+- Upload participant photo
+- Generate unique participant code
+- View personal page
+- Generate QR
+- Generate card
+
+Participant fields:
+
+- Participant ID
+- Participant Code
+- Full Name
+- Photo
+- Event ID
+- Personal Message
+- Created At
+
+Validasi:
+- Participant Code harus unik.
+- Nama wajib diisi.
+- Foto optional.
+- Event dapat dipilih.
+
+==================================================
+10. PLANT DATABASE
+==================================================
+
+Admin dapat membuat master tanaman.
+
+Fields:
+
+- Plant ID
+- Plant Code
+- Plant Name
+- Scientific Name
+- Category
+- Main Image
+- Overview
+- Characteristics
+- Benefits
+- Habitat
+- Care Guide
+- Created At
+
+Admin dapat:
+- Create plant
+- Edit plant
+- Delete plant
+- Search plant
+- Upload image
+- Preview information
+
+Data tanaman harus dapat digunakan oleh banyak participant.
+
+==================================================
+11. PLANT RECORDS
+==================================================
+
+Plant Record menghubungkan Participant dengan Plant.
+
+Fields:
+
+- Record ID
+- Participant ID
+- Plant ID
+- Unique Plant ID Code
+- Planting Date
+- Location
+- Plant Photo
+- Participant with Plant Photo
+- Description
+- Template ID
+- Status
+- Created At
+
+Status:
+- Draft
+- Published
+- Archived
+
+Admin dapat:
+- Create record
+- Edit record
+- Delete record
+- Preview page
+- Publish page
+- Archive page
+
+Untuk versi awal, satu participant memiliki satu main plant record.
+
+Pastikan sistem tetap dapat dikembangkan agar satu participant dapat memiliki lebih dari satu plant record.
+
+==================================================
+12. GROWTH UPDATES
+==================================================
+
+Admin dapat meng-upload dokumentasi perkembangan tanaman.
+
+Fields:
+
+- Update ID
+- Plant Record ID
+- Update Date
+- Photo
+- Title
+- Description
+
+Features:
+- Upload photo
+- Edit
+- Delete
+- Preview
+- Date sorting
+
+Growth updates harus muncul otomatis di halaman personal.
+
+==================================================
+13. CARD GENERATOR
+==================================================
+
+Buat fitur Plant Card Generator.
+
+Admin dapat:
+- Memilih participant
+- Memilih plant record
+- Memilih template
+- Preview front card
+- Preview back card
+- Generate QR Code
+- Download card
+
+Card front:
+- Logo
+- Plant photo
+- Plant name
+- Participant name
+- Plant ID
+- Event name
+- Year
+
+Card back:
+- QR Code
+- Plant ID
+- Plant name
+- Planting date
+- Scan to discover my plant
+
+QR Code mengarah ke personal page.
+
+Contoh URL:
+https://domain.com/plant/SB26-0001
+
+Sediakan printable PDF dengan front dan back card.
+
+Ukuran awal:
+85.6 mm x 54 mm.
+
+Perhatikan:
+- Margin
+- Bleed jika memungkinkan
+- Print layout
+- QR scannability
+- High resolution
+- Safe area
+
+QR Code tidak menyimpan seluruh informasi tanaman, tetapi mengarah ke personal page URL.
+
+==================================================
+14. EVENT MANAGEMENT
+==================================================
+
+Admin dapat mengelola event.
+
+Fields:
+- Event ID
+- Event name
+- Slug
+- Date
+- Location
+- Description
+- Cover image
+- Registration URL
+- Status
+
+Status:
+- Upcoming
+- Ongoing
+- Completed
+
+Event ditampilkan di landing page secara dinamis.
+
+==================================================
+15. FIRESTORE DATABASE STRUCTURE
+==================================================
+
+Buat collections:
+
+users
+events
+participants
+plants
+plantRecords
+growthUpdates
+cardTemplates
+
+Relasi:
+
+Participant:
+Memiliki event.
+
+PlantRecord:
+Menghubungkan participant dan plant.
+
+GrowthUpdate:
+Menghubungkan plantRecord.
+
+CardTemplate:
+Digunakan oleh plantRecord.
+
+Gunakan ID unik.
+
+Jangan menyimpan seluruh data peserta di dalam satu dokumen besar.
+
+==================================================
+16. FIREBASE SECURITY
+==================================================
+
+Implementasikan Firebase Security Rules.
+
+Admin:
+- Hanya admin authenticated yang dapat mengelola data.
+
+Public:
+- Hanya dapat membaca event public.
+- Hanya dapat membaca plant records berstatus Published.
+- Tidak dapat mengubah database.
+- Tidak dapat membaca informasi pribadi yang tidak ditampilkan secara publik.
+
+Storage:
+- Validasi file.
+- Validasi ukuran.
+- Validasi image MIME type.
+- Jangan membiarkan upload unrestricted.
+
+Jangan expose Firebase secrets atau service account credentials di frontend.
+
+Jika membutuhkan privileged actions, gunakan backend/server-side functions yang aman.
+
+==================================================
+17. RESPONSIVE DESIGN
+==================================================
+
+Website harus mobile-first.
+
+Mobile:
+- Single column
+- Readable typography
+- Full-width CTA
+- Images properly cropped
+- Smooth scrolling
+- Touch-friendly buttons
+- No horizontal overflow
+
+Desktop:
+- Editorial layout
+- Two-column sections
+- Large imagery
+- Spacious sections
+- Balanced content
+
+Test viewport:
+- 375px
+- 768px
+- 1024px
+- 1440px
+
+==================================================
+18. UI STATES
+==================================================
+
+Implementasikan:
+
+Loading state
+Empty state
+Error state
+Success state
+Not found state
+
+Jangan membuat tombol yang hanya dekoratif jika seharusnya memiliki fungsi.
+
+Semua form harus memiliki:
+- Validation
+- Error messages
+- Success feedback
+- Loading feedback
+
+==================================================
+19. CODE QUALITY
+==================================================
+
+- Reusable components
+- Clean folder structure
+- TypeScript types
+- Consistent naming
+- Reusable form components
+- Reusable modal
+- Reusable card
+- Reusable image upload
+- Reusable button
+- Error handling
+- No duplicated code unnecessarily
+
+Jangan membuat seluruh project dalam satu komponen.
+
+==================================================
+20. IMPLEMENTATION PRIORITY
+==================================================
+
+Bangun project secara bertahap.
+
+PHASE 1:
+- Public landing page
+- Responsive layout
+- My Plant Search Page
+- Personal Plant Journey template
+- Mock data untuk preview visual
+
+PHASE 2:
+- Firebase integration
+- Admin login
+- Dashboard
+- Participant CRUD
+- Plant CRUD
+
+PHASE 3:
+- Plant records
+- Image uploads
+- Growth updates
+- Dynamic personal page
+
+PHASE 4:
+- QR generation
+- Card generator
+- Printable PDF
+
+PHASE 5:
+- Security rules
+- Error states
+- Testing
+- Deployment preparation
+
+Jangan mencoba menyelesaikan seluruh fitur sekaligus dengan kode yang tidak terstruktur.
+
+==================================================
+21. ACCEPTANCE CRITERIA
+==================================================
+
+Project dianggap berhasil jika:
+
+1. Public landing page berfungsi.
+2. Website responsif.
+3. Admin dapat login.
+4. Admin dapat menambahkan tanaman.
+5. Admin dapat menambahkan peserta.
+6. Admin dapat upload foto.
+7. Admin dapat menghubungkan peserta dengan tanaman.
+8. Plant ID otomatis dan unik.
+9. Personal page dihasilkan secara dinamis.
+10. Informasi tanaman diambil dari database.
+11. Growth updates dapat ditambahkan.
+12. QR Code unik berfungsi.
+13. QR Code membuka personal page yang benar.
+14. Card front dan back dapat di-preview.
+15. Card dapat di-download dalam format printable.
+16. Data tidak hilang ketika halaman direfresh.
+17. Tidak ada tombol utama yang hanya menjadi dummy.
+18. Public tidak dapat mengakses dashboard admin.
+19. Halaman peserta hanya menampilkan data yang diizinkan untuk publik.
+20. Semua komponen memiliki error, loading, dan empty states.
+
+==================================================
+22. FIRST ACTION
+==================================================
+
+Mulailah dengan membangun PHASE 1 terlebih dahulu.
+
+Prioritas:
+- Buat design system.
+- Buat public landing page.
+- Buat My Plant Search Page.
+- Buat Personal Plant Journey page menggunakan data contoh yang realistis.
+- Buat layout storytelling scrolling.
+- Buat reusable components.
+- Pastikan responsive design.
+
+Jangan langsung membuat dashboard admin yang kompleks sebelum public website dan personal page selesai.
+
+Setelah PHASE 1 selesai, jelaskan:
+- File yang telah dibuat.
+- Struktur project.
+- Komponen.
+- Routes.
+- Fitur yang sudah berfungsi.
+- Fitur yang belum terhubung ke Firebase.
+
+Jangan mengklaim backend sudah terhubung jika masih menggunakan mock data.
+
+Buat hasil website yang estetis, modern, unik, natural, dan layak menjadi website campaign lingkungan profesional Aksi Sobat Bumi.
+
+---
+
+# 45. Cara menggunakan prompt di Google AI Studio
+
+Aku sarankan jangan langsung memasukkan semua fitur lalu berharap AI membangun semuanya sekaligus. Prompt di atas memang lengkap, tetapi proses pengerjaannya lebih baik bertahap.
+
+### LANGKAH 1 — Buka Google AI Studio
+
+Masuk ke Google AI Studio, kemudian pilih mode pembuatan aplikasi (Build).
+
+### LANGKAH 2 — Masukkan Master Prompt
+
+Copy prompt di atas dan masukkan ke AI Studio.
+
+Tujuannya agar AI memahami:
+- Konsep website.
+- Desain.
+- Struktur.
+- Fitur.
+- Database.
+- Alur.
+
+### LANGKAH 3 — Selesaikan Phase 1
+
+Pastikan AI menghasilkan terlebih dahulu:
+
+- Homepage.
+- My Plant Journey.
+- Plant ID Search.
+- Personal scrolling page.
+- Foto peserta.
+- Foto tanaman.
+- Growth timeline.
+- Plant information.
+
+Untuk tahap ini, boleh menggunakan data contoh agar tampilan dapat dilihat dahulu.
+
+### LANGKAH 4 — Periksa desain
+
+Pastikan tampilannya:
+- Tidak terlalu generik.
+- Tidak seperti dashboard template.
+- Background tidak monoton.
+- Foto alam menjadi fokus.
+- Scroll section terasa seperti storytelling.
+- Mobile tetap bagus.
+
+### LANGKAH 5 — Baru bangun backend
+
+Setelah tampilan dan struktur sudah sesuai, lanjutkan dengan prompt:
+
+> Sekarang lanjutkan Phase 2 dari project yang sudah dibuat. Jangan merombak desain, layout, typography, color palette, routing, dan komponen public yang sudah ada. Integrasikan Firebase Firestore, Firebase Authentication, dan Firebase Storage. Implementasikan admin login, dashboard, CRUD participants, dan CRUD plants. Semua data harus benar-benar tersimpan ke database, bukan hanya menggunakan mock data. Pertahankan struktur project yang sudah ada, dan jelaskan setup Firebase yang diperlukan.
+
+Lalu lanjutkan Phase 3, 4, dan 5 secara berurutan.
+
+---
+
+# 46. Prompt lanjutan untuk setiap fase
+
+Supaya AI Studio tidak merombak website yang sudah kamu buat, gunakan prompt berikut setiap kali melanjutkan.
+
+### Phase 2 — Database dan Admin
+
+> Lanjutkan Phase 2. Implementasikan Firebase secara nyata pada project yang sudah dibuat. Buat authentication untuk admin, dashboard, participant management, plant database, CRUD, upload foto, validasi, loading states, error handling, dan security. Jangan mengubah desain public website. Jangan menggunakan mock data untuk operasi CRUD yang sudah diimplementasikan. Jika ada konfigurasi Firebase yang belum tersedia, jelaskan dengan tepat apa yang harus saya isi.
+
+### Phase 3 — Plant Journey
+
+> Lanjutkan Phase 3. Hubungkan participant, plants, plant records, dan growth updates ke database. Buat personal plant page yang datanya dinamis berdasarkan unique Plant ID. Semua section harus menggunakan data yang sebenarnya dari database. Jika foto atau dokumentasi belum tersedia, gunakan empty state yang elegan, bukan data palsu.
+
+### Phase 4 — QR dan kartu
+
+> Lanjutkan Phase 4. Implementasikan QR Code generator berdasarkan URL personal setiap Plant Record. Buat Plant Card Generator yang menampilkan preview front dan back, template yang reusable, serta download PDF dengan ukuran kartu yang dapat dicetak. QR Code harus dapat dipindai dan mengarah ke halaman tanaman yang tepat. Pertahankan identitas visual website.
+
+### Phase 5 — Finalisasi
+
+> Lanjutkan Phase 5. Audit seluruh website. Periksa routing, responsive design, authentication, security rules, upload, database, QR Code, PDF, error states, dan seluruh tombol. Perbaiki fitur yang belum berfungsi. Jangan mengklaim fitur berhasil jika masih belum diimplementasikan. Buat daftar final fitur yang sudah selesai dan konfigurasi yang masih harus saya lakukan.
+
+---
+
+# 47. Saran tambahan yang menurutku penting untuk sistemmu
+
+Ada 3 hal yang sebaiknya kita pertahankan sejak awal.
+
+### 1. Plant ID jangan berubah
+
+Misalnya peserta mendapatkan:
+
+`SB26-0001`
+
+ID tersebut harus tetap sama, meskipun:
+- Foto diubah.
+- Deskripsi diperbarui.
+- Dokumentasi ditambahkan.
+- Template kartu diganti.
+
+QR tetap mengarah ke halaman yang sama.
+
+### 2. Foto peserta dan foto tanaman dipisahkan
+
+Jangan menggunakan satu foto untuk semua bagian.
+
+Simpan secara terpisah:
+- Foto peserta bersama tanaman.
+- Foto tanaman saat penanaman.
+- Foto perkembangan tanaman.
+- Foto utama tanaman untuk informasi edukasi.
+
+Ini akan membuat storytelling website lebih bagus.
+
+### 3. Data tanaman dan data peserta jangan digabung
+
+Peserta adalah orang.
+
+Tanaman adalah master data.
+
+Plant Record adalah hubungan antara orang dan tanaman yang ditanam.
+
+Growth Update adalah dokumentasi perkembangan.
+
+Pemisahan ini akan memudahkan website dikembangkan lebih jauh.
+
+---
+
+## 48. Gambaran hasil akhirnya
+
+Pengunjung masuk dari Linktree:
+
+**AKSI SOBAT BUMI** 🌱
+
+↓ Klik **MY PLANT JOURNEY**
+
+↓ Masukkan Plant ID atau scan QR kartu
+
+↓ Website personal terbuka
+
+↓ Scroll:
+
+1. Hero nama peserta.
+2. Foto peserta bersama tanaman.
+3. Cerita awal penanaman.
+4. Perkembangan tanaman.
+5. Informasi jenis tanaman.
+6. Kartu digital.
+7. Pesan personal.
+8. Closing campaign.
+
+Sementara admin memiliki sistem:
+
+**Dashboard → Tambah peserta → Upload foto → Pilih tanaman → Isi data → Preview → Generate Plant ID → Generate QR → Generate Card → Publish.**
+
+Jadi, target kita bukan hanya membuat website yang cantik, tetapi membuat **sistem digital dokumentasi penanaman yang memiliki identitas personal, dapat berkembang, dan bisa digunakan berulang kali untuk event Sobat Bumi berikutnya**.
+
+Saran penting: saat kamu mulai di Google AI Studio, simpan hasil setiap fase dan jangan langsung menyuruh AI membangun semua fitur dalam satu kali pengerjaan. Blueprint ini menjadi acuan utama agar desain, database, dan fitur tetap konsisten meskipun website dikembangkan bertahap. 🌳
