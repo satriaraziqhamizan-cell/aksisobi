@@ -19,13 +19,14 @@ export const WHATSAPP_DISPLAY = '+62 821-7997-5317';
 export const WHATSAPP_URL = 'https://wa.me/6282179975317';
 
 export const MEDIA_ASSETS = {
-  heroForest: '/src/assets/images/hero_forest_planting_1795073742231.jpg',
-  aboutCommunity: '/src/assets/images/about_community_action_1795073744909.jpg',
-  tabebuyaMain: '/src/assets/images/plant_tabebuya_gold_1795073744839.jpg',
-  ketapangMain: '/src/assets/images/plant_ketapang_green_1795073744662.jpg',
-  satriaPortrait: '/src/assets/images/participant_satria_tabebuya_1795073744882.jpg',
-  nadiaPortrait: '/src/assets/images/participant_nadia_ketapang_1795073745543.jpg',
-  growthSapling: '/src/assets/images/growth_sapling_soil_1795073744609.jpg',
+  heroForest: '/assets/aistudio/99hu2hh16jrqyd3_93ffb906.jpeg',
+  aboutCommunity: '/assets/aistudio/images__1__f4060c8d.jpeg',
+  tabebuyaMain: '/assets/aistudio/Bunga-Tabebuya-Kuning-582x1024_75bbc471.webp',
+  ketapangMain: '/assets/aistudio/images__2__2a08955d.jpeg',
+  satriaPortrait:
+    '/assets/aistudio/pngtree-farmer-planting-mango-sapling-in-rural-field-at-sunset-image_18119207_dd80273a.webp',
+  nadiaPortrait: '/assets/aistudio/images__2__2a08955d.jpeg',
+  growthSapling: '/assets/aistudio/iqjjefrd9amxyja_5532234b.jpeg',
 };
 
 export const CARD_TEMPLATES: CardTemplateOption[] = [

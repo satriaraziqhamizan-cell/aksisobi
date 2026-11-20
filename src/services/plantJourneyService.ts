@@ -23,7 +23,7 @@ import type {
 export const DEFAULT_PERSONAL_MESSAGE =
   'One small action can grow into something meaningful.';
 
-const STORAGE_KEY = 'asb_plant_journey_store_v3';
+const STORAGE_KEY = 'asb_plant_journey_store_v4';
 
 interface StoreState {
   plants: PlantSpecies[];
