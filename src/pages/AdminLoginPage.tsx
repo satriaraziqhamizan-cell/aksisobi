@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { ArrowRight, LogOut, ShieldCheck } from 'lucide-react';
+import { ArrowRight, ExternalLink, LogOut, ShieldCheck } from 'lucide-react';
+import firebaseConfig from '../../firebase-applet-config.json';
 import { ADMIN_EMAIL, signInWithGooglePopup, signOutFirebase } from '../firebase';
 import { usePlantData } from '../context/PlantDataContext';
 import { MEDIA_ASSETS } from '../data/seedData';
@@ -12,6 +13,7 @@ export function AdminLoginPage() {
   const navigate = useNavigate();
   const { authReady, user, isAdmin } = usePlantData();
   const [error, setError] = useState('');
+  const [unauthorizedHost, setUnauthorizedHost] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   if (authReady && isAdmin) {
@@ -20,6 +22,7 @@ export function AdminLoginPage() {
 
   const handleGoogleSignIn = async () => {
     setError('');
+    setUnauthorizedHost('');
     setSubmitting(true);
     try {
       const cred = await signInWithGooglePopup();
@@ -32,11 +35,40 @@ export function AdminLoginPage() {
         );
       }
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : 'Gagal masuk dengan Google. Pastikan pop-up browser tidak diblokir.'
-      );
+      const code =
+        typeof err === 'object' && err !== null && 'code' in err
+          ? String((err as { code?: unknown }).code || '')
+          : '';
+      const msg = err instanceof Error ? err.message : '';
+
+      if (
+        code === 'auth/unauthorized-domain' ||
+        msg.includes('unauthorized-domain')
+      ) {
+        const host =
+          typeof window !== 'undefined' ? window.location.hostname : '';
+        setUnauthorizedHost(host);
+        setError(
+          `Domain "${host}" belum didaftarkan di Authorized Domains Firebase Authentication.`
+        );
+      } else if (
+        code === 'auth/popup-blocked' ||
+        msg.includes('popup-blocked')
+      ) {
+        setError(
+          'Jendela login Google diblokir oleh browser. Izinkan pop-up untuk situs ini lalu coba lagi.'
+        );
+      } else if (
+        code === 'auth/popup-closed-by-user' ||
+        msg.includes('popup-closed-by-user')
+      ) {
+        setError('Proses masuk dengan Google dibatalkan sebelum selesai.');
+      } else {
+        setError(
+          msg ||
+            'Gagal masuk dengan Google. Pastikan pop-up browser tidak diblokir.'
+        );
+      }
     } finally {
       setSubmitting(false);
     }
@@ -44,9 +76,12 @@ export function AdminLoginPage() {
 
   const handleSwitchAccount = async () => {
     setError('');
+    setUnauthorizedHost('');
     await signOutFirebase();
     await handleGoogleSignIn();
   };
+
+  const firebaseAuthSettingsUrl = `https://console.firebase.google.com/project/${firebaseConfig.projectId}/authentication/settings`;
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F6F8F6] text-[#0F1F17]">
@@ -86,9 +121,41 @@ export function AdminLoginPage() {
             {error && (
               <div
                 role="alert"
-                className="p-3.5 text-xs font-medium bg-red-50 border border-red-200 text-red-900 rounded-xl"
+                className="p-4 text-xs bg-red-50 border border-red-200 text-red-900 rounded-xl space-y-2.5 leading-relaxed"
               >
-                {error}
+                <p className="font-semibold">{error}</p>
+                {unauthorizedHost && (
+                  <div className="space-y-2 pt-1 border-t border-red-200/80 text-red-900/90">
+                    <p>Cara mengizinkan domain ini agar bisa login Google:</p>
+                    <ol className="list-decimal pl-4 space-y-1">
+                      <li>
+                        Buka{' '}
+                        <strong>
+                          Firebase Console → Authentication → Settings →
+                          Authorized domains
+                        </strong>
+                        .
+                      </li>
+                      <li>
+                        Klik <strong>Add domain</strong>, lalu masukkan{' '}
+                        <span className="font-mono font-semibold bg-white px-1.5 py-0.5 rounded border border-red-200">
+                          {unauthorizedHost}
+                        </span>
+                        .
+                      </li>
+                      <li>Simpan, lalu klik tombol masuk di bawah ini lagi.</li>
+                    </ol>
+                    <a
+                      href={firebaseAuthSettingsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 font-semibold text-[#14532D] underline hover:text-[#166534]"
+                    >
+                      Buka Pengaturan Authorized Domains Firebase
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                )}
               </div>
             )}
 

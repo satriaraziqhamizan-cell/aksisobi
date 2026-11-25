@@ -2,7 +2,7 @@
 
 ## Data Invariants
 1. Public catalog documents (`/plants`, `/events`) are readable by all visitors and writable only by verified administrators.
-2. `/plantJourneys/{recordCode}` can be read publicly only when `status == 'Published'`. Creation and deletion are restricted to verified administrators.
+2. `/plantJourneys/{recordCode}` single-document `get` is publicly readable only when `status == 'Published'` (requiring exact `recordCode`), while collection `list`, creation, and deletion are restricted strictly to verified administrators.
 3. Verified signed-in users (`email_verified == true`) updating a published `/plantJourneys/{recordCode}` may only update `participantPlantPhoto`, `plantPhoto`, `personalMessage`, and `updatedAt`, preserving `plantIdCode`, `fullName`, `plantId`, `eventId`, `cardFrontPhoto`, `status`, and `createdAt`.
 4. Growth updates live in `/plantJourneys/{recordCode}/growthUpdates/{updateId}` (subcollection, never unbounded arrays), require an existing published parent `/plantJourneys/{recordCode}`, enforce `authorUid == request.auth.uid`, and validate strict string sizes and server timestamps.
 5. Admin integration settings (`/settings/{settingId}`) and admin role records (`/admins/{uid}`) are restricted strictly to verified admins.
@@ -18,5 +18,5 @@
 8. Non-admin reading `/settings/gform` (Google Sheet URL) -> DENIED.
 9. Self-escalation writing to `/admins/{uid}` -> DENIED.
 10. Client-forged `createdAt` or `updatedAt` timestamp -> DENIED via `== request.time`.
-11. Listing Draft plant journeys by unauthenticated caller -> DENIED via `resource.data.status == 'Published'`.
+11. Listing `/plantJourneys` collection by any non-admin caller -> DENIED via `allow list: if isAdmin()`.
 12. Deleting any plant journey or growth update by non-admin -> DENIED.

@@ -4,7 +4,10 @@ import { AlertCircle, Camera, ImageUp, VideoOff } from 'lucide-react';
 import { extractPlantIdFromScan } from '../utils/qrLinks';
 
 interface QrScannerPanelProps {
-  onCodeDetected: (plantIdCode: string, rawText: string) => boolean;
+  onCodeDetected: (
+    plantIdCode: string,
+    rawText: string
+  ) => boolean | Promise<boolean>;
 }
 
 export function QrScannerPanel({ onCodeDetected }: QrScannerPanelProps) {
@@ -47,8 +50,11 @@ export function QrScannerPanel({ onCodeDetected }: QrScannerPanelProps) {
     };
   }, [stopCamera]);
 
+  const checkingRef = useRef(false);
+
   const handleDecodedRaw = useCallback(
-    (rawValue: string): boolean => {
+    async (rawValue: string): Promise<boolean> => {
+      if (checkingRef.current) return false;
       const code = extractPlantIdFromScan(rawValue);
       if (!code) {
         setError(
@@ -57,16 +63,21 @@ export function QrScannerPanel({ onCodeDetected }: QrScannerPanelProps) {
         return false;
       }
 
-      const matched = onCodeDetected(code, rawValue);
-      if (matched) {
-        stopCamera();
-        return true;
-      }
+      checkingRef.current = true;
+      try {
+        const matched = await onCodeDetected(code, rawValue);
+        if (matched) {
+          stopCamera();
+          return true;
+        }
 
-      setError(
-        `Kode "${code}" terbaca dari QR, tetapi ID Pohon tersebut belum terdaftar atau belum dipublikasikan.`
-      );
-      return false;
+        setError(
+          `Kode "${code}" terbaca dari QR, tetapi ID Pohon tersebut belum terdaftar atau belum dipublikasikan.`
+        );
+        return false;
+      } finally {
+        checkingRef.current = false;
+      }
     },
     [onCodeDetected, stopCamera]
   );
@@ -78,6 +89,7 @@ export function QrScannerPanel({ onCodeDetected }: QrScannerPanelProps) {
 
     const now = performance.now();
     if (
+      !checkingRef.current &&
       now - lastScanAtRef.current >= 140 &&
       video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
       video.videoWidth > 0 &&
@@ -94,8 +106,12 @@ export function QrScannerPanel({ onCodeDetected }: QrScannerPanelProps) {
           inversionAttempts: 'attemptBoth',
         });
         if (result && result.data) {
-          const navigated = handleDecodedRaw(result.data);
-          if (navigated) return;
+          void handleDecodedRaw(result.data).then((navigated) => {
+            if (!navigated && streamRef.current) {
+              rafRef.current = window.requestAnimationFrame(scanFrameLoop);
+            }
+          });
+          return;
         }
       }
     }
@@ -253,7 +269,7 @@ export function QrScannerPanel({ onCodeDetected }: QrScannerPanelProps) {
         return;
       }
 
-      handleDecodedRaw(decoded.data);
+      await handleDecodedRaw(decoded.data);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'Gagal membaca gambar QR Code.'

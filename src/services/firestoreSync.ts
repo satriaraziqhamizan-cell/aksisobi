@@ -2,6 +2,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   onSnapshot,
   query,
@@ -146,6 +147,69 @@ export function enrichJourneyDoc(
       a.updateDate.localeCompare(b.updateDate)
     ),
   };
+}
+
+export async function fetchJourneyByCodeFromFirestore(
+  plantIdCode: string,
+  plants: PlantSpecies[],
+  events: EventItem[]
+): Promise<EnrichedPlantJourney | null> {
+  const code = plantIdCode.trim().toUpperCase();
+  if (!/^[A-Z0-9_-]{3,24}$/.test(code)) return null;
+
+  try {
+    const snap = await getDoc(doc(db, 'plantJourneys', code));
+    if (!snap.exists()) return null;
+    const data = snap.data() as RawPlantJourneyDoc;
+    return enrichJourneyDoc(data, plants, events, []);
+  } catch (error) {
+    const codeStr =
+      typeof error === 'object' && error !== null && 'code' in error
+        ? String((error as { code?: unknown }).code || '')
+        : '';
+    // Non-existent or non-published docs return permission-denied under allow get rules
+    if (codeStr === 'permission-denied' || codeStr === 'not-found') {
+      return null;
+    }
+    handleFirestoreError(error, OperationType.GET, `plantJourneys/${code}`);
+  }
+}
+
+export function subscribeJourneyByCodeFromFirestore(
+  plantIdCode: string,
+  plants: PlantSpecies[],
+  events: EventItem[],
+  onResult: (journey: EnrichedPlantJourney | null) => void
+): () => void {
+  const code = plantIdCode.trim().toUpperCase();
+  if (!/^[A-Z0-9_-]{3,24}$/.test(code)) {
+    onResult(null);
+    return () => {};
+  }
+
+  const ref = doc(db, 'plantJourneys', code);
+  return onSnapshot(
+    ref,
+    (snap) => {
+      if (!snap.exists()) {
+        onResult(null);
+        return;
+      }
+      const data = snap.data() as RawPlantJourneyDoc;
+      onResult(enrichJourneyDoc(data, plants, events, []));
+    },
+    (error) => {
+      const codeStr =
+        typeof error === 'object' && error !== null && 'code' in error
+          ? String((error as { code?: unknown }).code || '')
+          : '';
+      if (codeStr === 'permission-denied' || codeStr === 'not-found') {
+        onResult(null);
+        return;
+      }
+      handleFirestoreError(error, OperationType.GET, `plantJourneys/${code}`);
+    }
+  );
 }
 
 export async function seedInitialCatalogAndSamples(): Promise<void> {

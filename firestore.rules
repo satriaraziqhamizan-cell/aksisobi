@@ -197,7 +197,7 @@ service cloud.firestore {
     // --- Published Plant Journeys ---
     match /plantJourneys/{recordCode} {
       allow get: if isValidId(recordCode) && (existing().status == 'Published' || isAdmin());
-      allow list: if existing().status == 'Published' || isAdmin();
+      allow list: if isAdmin();
       allow create: if isAdmin() && isValidId(recordCode) &&
         isValidPlantJourney(incoming()) &&
         incoming().plantIdCode == recordCode &&

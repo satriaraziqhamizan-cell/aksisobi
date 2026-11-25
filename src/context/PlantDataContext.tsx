@@ -13,8 +13,6 @@ import {
   collection,
   doc,
   onSnapshot,
-  query,
-  where,
 } from 'firebase/firestore';
 import {
   ADMIN_EMAIL,
@@ -39,6 +37,7 @@ import {
   ackWebhookInbox,
   enrichJourneyDoc,
   fetchGoogleSheetRows,
+  fetchJourneyByCodeFromFirestore,
   fetchWebhookInbox,
   importFormRowsToFirestore,
   saveIntegrationSettingsInFirestore,
@@ -53,6 +52,7 @@ interface PlantDataContextValue {
   user: User | null;
   isAdmin: boolean;
   firestoreReady: boolean;
+  catalogLoaded: boolean;
   plants: PlantSpecies[];
   events: EventItem[];
   journeys: EnrichedPlantJourney[];
@@ -69,6 +69,7 @@ interface PlantDataContextValue {
     detectedPhotoHeaders: string[];
   }>;
   getJourneyByCode: (code: string) => EnrichedPlantJourney | undefined;
+  resolveJourneyByCode: (code: string) => Promise<EnrichedPlantJourney | null>;
   getPlantByIdOrCode: (id: string) => PlantSpecies | undefined;
   getEventBySlug: (slug: string) => EventItem | undefined;
   movementStats: {
@@ -117,9 +118,12 @@ export function PlantDataProvider({ children }: { children: ReactNode }) {
 
   const [rawPlants, setRawPlants] = useState<PlantSpecies[] | null>(null);
   const [rawEvents, setRawEvents] = useState<EventItem[] | null>(null);
+  const [plantsLoaded, setPlantsLoaded] = useState(false);
+  const [eventsLoaded, setEventsLoaded] = useState(false);
   const [rawJourneys, setRawJourneys] = useState<RawPlantJourneyDoc[] | null>(
     null
   );
+  const [journeysLoaded, setJourneysLoaded] = useState(false);
   const [integrationSettings, setIntegrationSettings] =
     useState<IntegrationSettings>(DEFAULT_SETTINGS);
   const [syncingGForm, setSyncingGForm] = useState(false);
@@ -150,11 +154,12 @@ export function PlantDataProvider({ children }: { children: ReactNode }) {
     void seedInitialCatalogAndSamples();
   }, [isAdmin]);
 
-  // 3. Real-time Firestore listeners (public catalogs + published journeys)
+  // 3. Real-time Firestore listeners (public catalogs only; plantJourneys list is Admin-only)
   useEffect(() => {
     const unsubPlants = onSnapshot(
       collection(db, 'plants'),
       (snap) => {
+        setPlantsLoaded(true);
         if (snap.empty) {
           setRawPlants(null);
         } else {
@@ -163,12 +168,16 @@ export function PlantDataProvider({ children }: { children: ReactNode }) {
           setRawPlants(list);
         }
       },
-      (err) => handleFirestoreError(err, OperationType.LIST, 'plants')
+      (err) => {
+        setPlantsLoaded(true);
+        handleFirestoreError(err, OperationType.LIST, 'plants');
+      }
     );
 
     const unsubEvents = onSnapshot(
       collection(db, 'events'),
       (snap) => {
+        setEventsLoaded(true);
         if (snap.empty) {
           setRawEvents(null);
         } else {
@@ -177,16 +186,30 @@ export function PlantDataProvider({ children }: { children: ReactNode }) {
           setRawEvents(list);
         }
       },
-      (err) => handleFirestoreError(err, OperationType.LIST, 'events')
+      (err) => {
+        setEventsLoaded(true);
+        handleFirestoreError(err, OperationType.LIST, 'events');
+      }
     );
 
-    const journeysQuery = query(
-      collection(db, 'plantJourneys'),
-      where('status', '==', 'Published')
-    );
+    return () => {
+      unsubPlants();
+      unsubEvents();
+    };
+  }, []);
+
+  // 3b. Admin-only listener for full plantJourneys collection (prevents public scraping)
+  useEffect(() => {
+    if (!isAdmin) {
+      setRawJourneys(null);
+      setJourneysLoaded(false);
+      return;
+    }
+
     const unsubJourneys = onSnapshot(
-      journeysQuery,
+      collection(db, 'plantJourneys'),
       (snap) => {
+        setJourneysLoaded(true);
         if (snap.empty) {
           setRawJourneys(null);
         } else {
@@ -195,15 +218,14 @@ export function PlantDataProvider({ children }: { children: ReactNode }) {
           setRawJourneys(docs);
         }
       },
-      (err) => handleFirestoreError(err, OperationType.LIST, 'plantJourneys')
+      (err) => {
+        setJourneysLoaded(true);
+        handleFirestoreError(err, OperationType.LIST, 'plantJourneys');
+      }
     );
 
-    return () => {
-      unsubPlants();
-      unsubEvents();
-      unsubJourneys();
-    };
-  }, []);
+    return unsubJourneys;
+  }, [isAdmin]);
 
   // 4. Admin-only Integration Settings listener
   useEffect(() => {
@@ -249,13 +271,14 @@ export function PlantDataProvider({ children }: { children: ReactNode }) {
   );
 
   const journeys = useMemo(() => {
+    if (!isAdmin) return [];
     if (!rawJourneys || rawJourneys.length === 0) {
       return SEED_ENRICHED_JOURNEYS;
     }
     return rawJourneys
       .map((docData) => enrichJourneyDoc(docData, plants, events, []))
       .filter((item): item is EnrichedPlantJourney => item !== null);
-  }, [rawJourneys, plants, events]);
+  }, [isAdmin, rawJourneys, plants, events]);
 
   const fingerprints = useMemo(() => {
     const set = new Set<string>();
@@ -283,7 +306,8 @@ export function PlantDataProvider({ children }: { children: ReactNode }) {
     return map;
   }, [rawJourneys]);
 
-  const firestoreReady = Boolean(rawPlants && rawEvents && rawJourneys);
+  const catalogLoaded = plantsLoaded && eventsLoaded;
+  const firestoreReady = Boolean(rawPlants && rawEvents);
 
   // 5. Google Form Sync (both Sheet CSV auto-fetch & Apps Script Webhook inbox)
   const syncGoogleSheetNow = useCallback(
@@ -398,7 +422,7 @@ export function PlantDataProvider({ children }: { children: ReactNode }) {
 
   // Automatic background polling when Admin is logged in & Firestore seeded
   useEffect(() => {
-    if (!isAdmin || !firestoreReady) return;
+    if (!isAdmin || !firestoreReady || !journeysLoaded) return;
 
     const runSilentAutoSync = async () => {
       if (syncingRef.current || !user) return;
@@ -488,6 +512,7 @@ export function PlantDataProvider({ children }: { children: ReactNode }) {
   }, [
     isAdmin,
     firestoreReady,
+    journeysLoaded,
     user,
     integrationSettings,
     fingerprints,
@@ -505,6 +530,39 @@ export function PlantDataProvider({ children }: { children: ReactNode }) {
       );
     },
     [journeys]
+  );
+
+  const resolveJourneyByCode = useCallback(
+    async (code: string): Promise<EnrichedPlantJourney | null> => {
+      const normalized = code.trim().toUpperCase();
+      if (!normalized) return null;
+
+      if (isAdmin) {
+        const localMatch = journeys.find(
+          (j) => j.record.plantIdCode.toUpperCase() === normalized
+        );
+        if (localMatch) return localMatch;
+      }
+
+      const remote = await fetchJourneyByCodeFromFirestore(
+        normalized,
+        plants,
+        events
+      );
+      if (remote) return remote;
+
+      // Fallback only when database has not been seeded yet
+      if (!rawPlants) {
+        return (
+          SEED_ENRICHED_JOURNEYS.find(
+            (j) => j.record.plantIdCode.toUpperCase() === normalized
+          ) || null
+        );
+      }
+
+      return null;
+    },
+    [isAdmin, journeys, plants, events, rawPlants]
   );
 
   const getPlantByIdOrCode = useCallback(
@@ -553,6 +611,7 @@ export function PlantDataProvider({ children }: { children: ReactNode }) {
     user,
     isAdmin,
     firestoreReady,
+    catalogLoaded,
     plants,
     events,
     journeys,
@@ -562,6 +621,7 @@ export function PlantDataProvider({ children }: { children: ReactNode }) {
     syncingGForm,
     syncGoogleSheetNow,
     getJourneyByCode,
+    resolveJourneyByCode,
     getPlantByIdOrCode,
     getEventBySlug,
     movementStats,

@@ -3,7 +3,6 @@ import { Link, useParams } from 'react-router-dom';
 import {
   ArrowDown,
   ArrowLeft,
-  ArrowRight,
   Camera,
   Check,
   Edit3,
@@ -21,6 +20,7 @@ import { usePlantData } from '../context/PlantDataContext';
 import {
   addGrowthUpdateInFirestore,
   subscribeGrowthUpdates,
+  subscribeJourneyByCodeFromFirestore,
   updateJourneyDetailsInFirestore,
   updateJourneyPhotoInFirestore,
 } from '../services/firestoreSync';
@@ -28,7 +28,7 @@ import {
   compressImageFile,
   DEFAULT_PERSONAL_MESSAGE,
 } from '../services/plantJourneyService';
-import type { GrowthUpdate } from '../types/plantJourney';
+import type { EnrichedPlantJourney, GrowthUpdate } from '../types/plantJourney';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { ResilientImage } from '../components/ResilientImage';
@@ -42,12 +42,19 @@ export function PlantJourneyPage() {
   const { plantId = '' } = useParams<{ plantId: string }>();
   const {
     user,
-    journeys: allJourneys,
+    isAdmin,
+    plants,
+    events,
     firestoreReady,
+    catalogLoaded,
     getJourneyByCode,
+    resolveJourneyByCode,
   } = usePlantData();
 
-  const journey = getJourneyByCode(plantId);
+  const adminJourney = isAdmin ? getJourneyByCode(plantId) : undefined;
+  const [singleJourney, setSingleJourney] =
+    useState<EnrichedPlantJourney | null>(null);
+  const [loadingJourney, setLoadingJourney] = useState(true);
   const [liveUpdates, setLiveUpdates] = useState<GrowthUpdate[] | null>(null);
 
   const [editingMessage, setEditingMessage] = useState(false);
@@ -72,7 +79,57 @@ export function PlantJourneyPage() {
     setShowGrowthForm(false);
     setActionNotice('');
     setLiveUpdates(null);
+    setSingleJourney(null);
+    setLoadingJourney(true);
   }, [plantId]);
+
+  useEffect(() => {
+    if (!catalogLoaded) return;
+    if (isAdmin && adminJourney) {
+      setSingleJourney(adminJourney);
+      setLoadingJourney(false);
+      return;
+    }
+
+    let active = true;
+    const unsub = subscribeJourneyByCodeFromFirestore(
+      plantId,
+      plants,
+      events,
+      (docJourney) => {
+        if (!active) return;
+        if (docJourney) {
+          setSingleJourney(docJourney);
+          setLoadingJourney(false);
+        } else if (!firestoreReady) {
+          void resolveJourneyByCode(plantId).then((fallback) => {
+            if (!active) return;
+            setSingleJourney(fallback);
+            setLoadingJourney(false);
+          });
+        } else {
+          setSingleJourney(null);
+          setLoadingJourney(false);
+        }
+      }
+    );
+
+    return () => {
+      active = false;
+      unsub();
+    };
+  }, [
+    plantId,
+    catalogLoaded,
+    firestoreReady,
+    isAdmin,
+    adminJourney,
+    plants,
+    events,
+    resolveJourneyByCode,
+  ]);
+
+  const journey = adminJourney || singleJourney;
 
   useEffect(() => {
     if (!journey || !firestoreReady) return;
@@ -82,6 +139,20 @@ export function PlantJourneyPage() {
     );
     return unsub;
   }, [journey?.record.plantIdCode, firestoreReady]);
+
+  if (loadingJourney && !journey) {
+    return (
+      <div className="min-h-screen flex flex-col bg-[#F6F8F6] text-[#0F1F17]">
+        <Navbar variant="solid" />
+        <main className="flex-1 flex items-center justify-center px-6 py-24">
+          <p className="text-sm font-mono uppercase tracking-widest text-[#4E6156]">
+            Memuat Halaman Pohon...
+          </p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!journey) {
     return (
@@ -143,10 +214,6 @@ export function PlantJourneyPage() {
     record.beginningTitle === 'Everything Starts With a Seed.'
       ? 'Semua Berawal dari Satu Benih.'
       : record.beginningTitle;
-
-  const otherJourney = allJourneys.find(
-    (item) => item.record.plantIdCode !== record.plantIdCode
-  );
 
   const needsGoogleSignIn = !user || !user.emailVerified;
 
@@ -318,19 +385,6 @@ export function PlantJourneyPage() {
                 <span>Lihat Detail Pohonku</span>
                 <ArrowDown className="w-3.5 h-3.5" />
               </a>
-
-              {otherJourney && (
-                <Link
-                  to={`/plant/${otherJourney.record.plantIdCode}`}
-                  className="inline-flex items-center gap-1.5 text-white/80 hover:text-[#A3E635] transition-colors"
-                >
-                  <span>
-                    Lihat Tanaman Lain: {otherJourney.plant.plantName} (
-                    {otherJourney.record.plantIdCode})
-                  </span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              )}
             </div>
           </div>
         </section>

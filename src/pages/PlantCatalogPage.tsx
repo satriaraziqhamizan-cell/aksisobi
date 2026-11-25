@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { QrCode } from 'lucide-react';
 import { usePlantData } from '../context/PlantDataContext';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
@@ -7,7 +7,7 @@ import { ResilientImage } from '../components/ResilientImage';
 import { BackButton } from '../components/BackButton';
 
 export function PlantCatalogPage() {
-  const { plants, journeys } = usePlantData();
+  const { plants } = usePlantData();
 
   return (
     <div className="min-h-screen flex flex-col bg-white text-[#0F1F17]">
@@ -38,12 +38,7 @@ export function PlantCatalogPage() {
         {/* Plant Species Directory */}
         <section className="py-16 sm:py-24">
           <div className="max-w-[1200px] mx-auto px-6 space-y-12">
-            {plants.map((plant) => {
-              const linkedJourney = journeys.find(
-                (j) => j.plant.id === plant.id
-              );
-
-              return (
+            {plants.map((plant) => (
                 <article
                   key={plant.id}
                   className="border border-zinc-200 bg-white rounded-2xl overflow-hidden"
@@ -115,28 +110,23 @@ export function PlantCatalogPage() {
                         </dl>
                       </div>
 
-                      {linkedJourney && (
-                        <div className="pt-6 border-t border-zinc-200 flex flex-wrap items-center justify-between gap-4">
-                          <div className="text-xs text-[#4E6156]">
-                            <span className="font-mono font-semibold text-[#0F1F17]">
-                              {linkedJourney.record.plantIdCode}
-                            </span>{' '}
-                            · Penanam: {linkedJourney.participant.fullName}
-                          </div>
-                          <Link
-                            to={`/plant/${linkedJourney.record.plantIdCode}`}
-                            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg bg-[#14532D] text-white hover:bg-[#166534] transition-colors whitespace-nowrap shrink-0"
-                          >
-                            Buka Halaman Pohon {plant.plantName}
-                            <ArrowRight className="w-4 h-4" />
-                          </Link>
-                        </div>
-                      )}
+                      <div className="pt-6 border-t border-zinc-200 flex flex-wrap items-center justify-between gap-4">
+                        <span className="text-xs text-[#4E6156]">
+                          Punya bibit {plant.plantName}? Buka halaman Anda via
+                          QR Cocard.
+                        </span>
+                        <Link
+                          to="/my-plant"
+                          className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg bg-[#14532D] text-white hover:bg-[#166534] transition-colors whitespace-nowrap shrink-0"
+                        >
+                          <QrCode className="w-4 h-4" />
+                          Pindai QR Pohonku
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </article>
-              );
-            })}
+            ))}
           </div>
         </section>
       </main>

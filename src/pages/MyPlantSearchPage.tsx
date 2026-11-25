@@ -1,29 +1,28 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, QrCode, Search, AlertCircle } from 'lucide-react';
+import { ArrowRight, QrCode, Search, AlertCircle, Lock } from 'lucide-react';
 import { usePlantData } from '../context/PlantDataContext';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
-import { ResilientImage } from '../components/ResilientImage';
 import { BackButton } from '../components/BackButton';
 import { QrScannerPanel } from '../components/QrScannerPanel';
 
 export function MyPlantSearchPage() {
   const navigate = useNavigate();
-  const { journeys: sampleJourneys, getJourneyByCode } = usePlantData();
+  const { resolveJourneyByCode } = usePlantData();
   const [mode, setMode] = useState<'scan' | 'type'>('scan');
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleCodeDetected = (plantIdCode: string): boolean => {
-    const found = getJourneyByCode(plantIdCode);
+  const handleCodeDetected = async (plantIdCode: string): Promise<boolean> => {
+    const found = await resolveJourneyByCode(plantIdCode);
     if (!found) return false;
     navigate(`/plant/${encodeURIComponent(found.record.plantIdCode)}`);
     return true;
   };
 
-  const handleSearch = (e: FormEvent) => {
+  const handleSearch = async (e: FormEvent) => {
     e.preventDefault();
     const cleaned = query.trim().toUpperCase();
 
@@ -35,10 +34,8 @@ export function MyPlantSearchPage() {
     setError('');
     setLoading(true);
 
-    window.setTimeout(() => {
-      const found = getJourneyByCode(cleaned);
-      setLoading(false);
-
+    try {
+      const found = await resolveJourneyByCode(cleaned);
       if (found) {
         navigate(`/plant/${encodeURIComponent(found.record.plantIdCode)}`);
       } else {
@@ -46,7 +43,11 @@ export function MyPlantSearchPage() {
           'ID Pohon tidak ditemukan. Periksa kembali kode pada kartu Anda atau pindai QR Code-nya.'
         );
       }
-    }, 180);
+    } catch {
+      setError('Terjadi kendala saat memeriksa ID Pohon. Silakan coba lagi.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -54,7 +55,7 @@ export function MyPlantSearchPage() {
       <Navbar variant="solid" />
 
       <main className="flex-1 py-10 sm:py-16">
-        <div className="max-w-[1040px] mx-auto px-6 space-y-14">
+        <div className="max-w-[1040px] mx-auto px-6 space-y-12">
           <div>
             <BackButton fallbackTo="/" label="Kembali ke Beranda" />
           </div>
@@ -68,8 +69,8 @@ export function MyPlantSearchPage() {
               Pindai QR atau Cari Pohonmu
             </h1>
             <p className="text-base text-[#4E6156] leading-relaxed">
-              Pindai QR Code pada kartu tanaman langsung dari kamera, atau
-              masukkan ID Pohon Anda untuk membuka halaman perjalanan pribadi.
+              Pindai QR Code pada kartu Cocard langsung dari kamera, atau
+              masukkan ID Pohon pribadi Anda untuk membuka halaman perjalanan.
             </p>
 
             <div className="mt-8 bg-white border border-zinc-200 rounded-2xl p-6 sm:p-8 text-left space-y-6">
@@ -118,7 +119,7 @@ export function MyPlantSearchPage() {
               {mode === 'scan' ? (
                 <QrScannerPanel onCodeDetected={handleCodeDetected} />
               ) : (
-                <form onSubmit={handleSearch} className="space-y-4">
+                <form onSubmit={(e) => void handleSearch(e)} className="space-y-4">
                   <div>
                     <label
                       htmlFor="plant-id-input"
@@ -136,7 +137,7 @@ export function MyPlantSearchPage() {
                           setQuery(e.target.value);
                           if (error) setError('');
                         }}
-                        placeholder="SB26-0001"
+                        placeholder="Masukkan kode ID pada kartu Anda"
                         autoComplete="off"
                         className="w-full pl-10 pr-4 py-3.5 font-mono text-sm uppercase tracking-wider bg-white border border-zinc-300 rounded-lg focus:outline-none focus:border-[#166534]"
                       />
@@ -164,65 +165,26 @@ export function MyPlantSearchPage() {
                 </form>
               )}
             </div>
-          </section>
 
-          {/* Registered Plant Journeys Quick Access */}
-          <section className="pt-10 border-t border-zinc-200 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
-              <div>
-                <p className="text-sm font-medium text-[#166534]">
-                  Daftar Pohon Terdaftar
+            <div className="bg-white/80 border border-zinc-200/80 rounded-xl p-4 text-left flex items-start gap-3">
+              <Lock className="w-4 h-4 text-[#166534] shrink-0 mt-0.5" />
+              <div className="text-xs text-[#4E6156] leading-relaxed space-y-1">
+                <p className="font-semibold text-[#0F1F17]">
+                  Akses Khusus Pemilik Kartu
                 </p>
-                <h2 className="text-2xl sm:text-3xl font-semibold text-[#0F1F17] mt-1">
-                  Pilih Nama atau ID Pohon
-                </h2>
-              </div>
-              <Link
-                to="/plants"
-                className="text-sm font-semibold text-[#166534] hover:text-[#0F1F17] whitespace-nowrap shrink-0"
-              >
-                Lihat Katalog Pohon →
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {sampleJourneys.map((item) => {
-                const isDayHEmpty =
-                  !item.record.participantPlantPhoto || !item.record.plantPhoto;
-
-                return (
+                <p>
+                  Demi menjaga keamanan dan privasi peserta, daftar kartu tidak
+                  ditampilkan secara terbuka. Halaman pohon hanya dapat dibuka
+                  jika Anda memindai QR Code pada kartu Cocard atau memasukkan ID
+                  Pohon yang sesuai.{' '}
                   <Link
-                    key={item.record.id}
-                    to={`/plant/${item.record.plantIdCode}`}
-                    className="group border border-zinc-200 bg-white hover:border-[#166534] rounded-2xl p-5 flex items-center gap-5 transition-colors"
+                    to="/plants"
+                    className="font-semibold text-[#166534] hover:underline"
                   >
-                    <div className="w-24 h-28 rounded-xl overflow-hidden shrink-0 border border-zinc-200 bg-zinc-100">
-                      <ResilientImage
-                        src={item.plant.mainImage}
-                        alt={item.plant.plantName}
-                        fallbackTitle={item.plant.plantName}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0 space-y-1.5">
-                      <p className="font-mono text-xs font-medium text-[#166534] tabular-nums">
-                        {item.record.plantIdCode} ·{' '}
-                        {isDayHEmpty ? 'Slot Hari-H Kosong' : 'Sudah Lengkap'}
-                      </p>
-                      <h3 className="text-xl font-semibold text-[#0F1F17] truncate">
-                        {item.plant.plantName}
-                      </h3>
-                      <p className="text-xs italic text-[#4E6156] truncate">
-                        {item.plant.scientificName}
-                      </p>
-                      <p className="text-xs text-[#0F1F17]/80 pt-1 truncate">
-                        Peserta: {item.participant.fullName}
-                      </p>
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-[#166534] shrink-0 group-hover:translate-x-1 transition-transform" />
+                    Lihat Katalog Pohon →
                   </Link>
-                );
-              })}
+                </p>
+              </div>
             </div>
           </section>
         </div>

@@ -7,7 +7,7 @@ import { Footer } from '../components/Footer';
 import { ResilientImage } from '../components/ResilientImage';
 
 export function HomePage() {
-  const { events, journeys, movementStats: stats } = usePlantData();
+  const { events, plants, movementStats: stats } = usePlantData();
 
   return (
     <div className="min-h-screen flex flex-col bg-white text-[#0F1F17]">
@@ -308,29 +308,29 @@ export function HomePage() {
               </div>
 
               <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {journeys.slice(0, 2).map((item) => (
+                {plants.slice(0, 2).map((plant) => (
                   <Link
-                    key={item.record.id}
-                    to={`/plant/${item.record.plantIdCode}`}
+                    key={plant.id}
+                    to="/plants"
                     className="group rounded-2xl overflow-hidden border border-zinc-200 bg-white hover:border-[#166534] transition-colors flex flex-col"
                   >
                     <div className="aspect-[3/4] w-full overflow-hidden bg-zinc-100">
                       <ResilientImage
-                        src={item.plant.mainImage}
-                        alt={item.plant.plantName}
-                        fallbackTitle={item.plant.plantName}
+                        src={plant.mainImage}
+                        alt={plant.plantName}
+                        fallbackTitle={plant.plantName}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>
                     <div className="p-5 space-y-1">
                       <p className="font-mono text-xs font-medium text-[#166534] tabular-nums">
-                        {item.record.plantIdCode}
+                        {plant.plantCode}
                       </p>
                       <h3 className="text-xl font-semibold text-[#0F1F17]">
-                        {item.plant.plantName}
+                        {plant.plantName}
                       </h3>
-                      <p className="text-xs text-[#4E6156] truncate">
-                        Penanam: {item.participant.fullName}
+                      <p className="text-xs italic text-[#4E6156] truncate">
+                        {plant.scientificName}
                       </p>
                     </div>
                   </Link>
