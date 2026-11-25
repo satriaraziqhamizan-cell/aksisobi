@@ -125,11 +125,6 @@ export function HomePage() {
 
               <div className="lg:col-span-6 flex flex-col justify-between space-y-8 order-1 lg:order-2">
                 <div className="space-y-5">
-                  <img
-                    src={MEDIA_ASSETS.brandLogo}
-                    alt="Logo Sobat Bumi Indonesia Universitas Jambi"
-                    className="h-16 w-auto object-contain"
-                  />
                   <h2 className="text-3xl sm:text-4xl font-semibold leading-tight text-[#0F1F17]">
                     Setiap Aksi Nyata Membawa Perubahan Berkelanjutan.
                   </h2>
