@@ -170,43 +170,50 @@ export function HomePage() {
               id="sdg"
               className="pt-16 border-t border-zinc-200 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center"
             >
-              <div className="lg:col-span-5 space-y-3">
-                <div className="rounded-2xl border border-zinc-200 bg-white p-5 sm:p-7">
+              <div className="lg:col-span-5 space-y-4">
+                <div className="py-2">
                   <ResilientImage
                     src={MEDIA_ASSETS.pfEcosystemVisual}
                     alt="Ekosistem keberlanjutan Pertamina Foundation: penanaman pohon, energi surya, akses air bersih, dan pemberdayaan masyarakat"
                     fallbackTitle="Ekosistem Keberlanjutan Pertamina Foundation"
-                    className="w-full h-auto object-contain"
+                    className="w-full h-auto object-contain mix-blend-multiply"
                   />
                 </div>
-                <p className="text-xs text-[#4E6156] leading-relaxed">
+                <p className="text-xs text-[#4E6156] leading-relaxed border-t border-zinc-200/80 pt-3">
                   Sinergi pelestarian lingkungan, energi bersih, air bersih, dan
                   pemberdayaan masyarakat dalam ekosistem Pertamina Foundation.
                 </p>
               </div>
 
-              <div className="lg:col-span-7 space-y-6">
-                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-                  <div className="space-y-2 max-w-xl">
-                    <p className="text-sm font-medium text-[#166534]">
-                      Bersinergi &amp; Berkelanjutan · TPB / SDG
-                    </p>
-                    <h2 className="text-3xl sm:text-4xl font-semibold leading-tight text-[#0F1F17]">
-                      Kontribusi pada Tujuan Pembangunan Berkelanjutan.
-                    </h2>
-                  </div>
+              <div className="lg:col-span-7 space-y-5">
+                <div className="space-y-3">
+                  <p className="text-sm font-medium text-[#166534]">
+                    Bersinergi &amp; Berkelanjutan · TPB / SDG
+                  </p>
+                  <h2 className="text-3xl sm:text-4xl font-semibold leading-tight text-[#0F1F17] max-w-2xl">
+                    Kontribusi pada Tujuan Pembangunan Berkelanjutan.
+                  </h2>
+                  <p className="text-base text-[#4E6156] leading-relaxed">
+                    Strategi keberlanjutan Pertamina Foundation mengintegrasikan
+                    program Tanggung Jawab Sosial dan Lingkungan (TJSL) ke dalam
+                    inisiatif nyata—termasuk gerakan Aksi Sobat Bumi Universitas
+                    Jambi—untuk berkontribusi langsung pada pencapaian Tujuan
+                    Pembangunan Berkelanjutan (TPB/SDG).
+                  </p>
+                </div>
 
+                <div className="pt-1 flex flex-wrap items-center justify-between gap-3">
                   <div
                     role="tablist"
                     aria-label="Tampilan peta SDG"
-                    className="inline-flex items-center gap-1 p-1 bg-white border border-zinc-200 rounded-lg self-start shrink-0"
+                    className="inline-flex items-center gap-1 p-1 bg-white border border-zinc-200 rounded-lg"
                   >
                     <button
                       type="button"
                       role="tab"
                       aria-selected={sdgView === 'focus'}
                       onClick={() => setSdgView('focus')}
-                      className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 ${
+                      className={`px-3.5 py-2 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 ${
                         sdgView === 'focus'
                           ? 'bg-[#14532D] text-white'
                           : 'text-[#4E6156] hover:text-[#0F1F17]'
@@ -219,7 +226,7 @@ export function HomePage() {
                       role="tab"
                       aria-selected={sdgView === 'all'}
                       onClick={() => setSdgView('all')}
-                      className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 ${
+                      className={`px-3.5 py-2 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 ${
                         sdgView === 'all'
                           ? 'bg-[#14532D] text-white'
                           : 'text-[#4E6156] hover:text-[#0F1F17]'
@@ -229,14 +236,6 @@ export function HomePage() {
                     </button>
                   </div>
                 </div>
-
-                <p className="text-base text-[#4E6156] leading-relaxed">
-                  Strategi keberlanjutan Pertamina Foundation mengintegrasikan
-                  program Tanggung Jawab Sosial dan Lingkungan (TJSL) ke dalam
-                  inisiatif nyata—termasuk gerakan Aksi Sobat Bumi Universitas
-                  Jambi—untuk berkontribusi langsung pada pencapaian Tujuan
-                  Pembangunan Berkelanjutan (TPB/SDG).
-                </p>
 
                 {sdgView === 'focus' ? (
                   <div className="space-y-6">
@@ -270,12 +269,12 @@ export function HomePage() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <div className="rounded-xl overflow-hidden border border-zinc-200 bg-white p-2">
+                    <div className="rounded-xl overflow-hidden border border-zinc-200 bg-white">
                       <ResilientImage
                         src={MEDIA_ASSETS.sdgFullGrid}
                         alt="17 Tujuan Pembangunan Berkelanjutan (TPB) Indonesia yang menjadi acuan program Pertamina Foundation"
                         fallbackTitle="17 Tujuan Pembangunan Berkelanjutan (TPB)"
-                        className="w-full h-auto object-contain"
+                        className="w-full h-auto object-contain block"
                       />
                     </div>
                     <p className="text-xs text-[#4E6156] leading-relaxed">
@@ -441,7 +440,7 @@ export function HomePage() {
                     to="/plants"
                     className="group rounded-2xl overflow-hidden border border-zinc-200 bg-white hover:border-[#166534] transition-colors flex flex-col"
                   >
-                    <div className="aspect-[3/4] w-full overflow-hidden bg-zinc-100">
+                    <div className="aspect-[4/3] w-full overflow-hidden bg-zinc-100">
                       <ResilientImage
                         src={plant.mainImage}
                         alt={plant.plantName}
@@ -449,10 +448,14 @@ export function HomePage() {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>
-                    <div className="p-5 space-y-1">
-                      <p className="font-mono text-xs font-medium text-[#166534] tabular-nums">
-                        {plant.plantCode}
-                      </p>
+                    <div className="p-5 sm:p-6 space-y-1.5">
+                      <div className="flex items-center gap-2 text-xs text-[#4E6156]">
+                        <span className="font-mono font-medium text-[#166534] tabular-nums">
+                          {plant.plantCode}
+                        </span>
+                        <span aria-hidden="true">·</span>
+                        <span className="truncate">{plant.category}</span>
+                      </div>
                       <h3 className="text-xl font-semibold text-[#0F1F17]">
                         {plant.plantName}
                       </h3>
