@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Sprout } from 'lucide-react';
+import { getPhotoFallbackCandidates } from '../utils/drivePhoto';
 
 interface ResilientImageProps {
   src: string;
@@ -14,9 +15,16 @@ export function ResilientImage({
   className = '',
   fallbackTitle,
 }: ResilientImageProps) {
-  const [hasError, setHasError] = useState(false);
+  const candidates = useMemo(() => getPhotoFallbackCandidates(src), [src]);
+  const [attemptIndex, setAttemptIndex] = useState(0);
 
-  if (hasError || !src) {
+  useEffect(() => {
+    setAttemptIndex(0);
+  }, [src]);
+
+  const activeSrc = candidates[attemptIndex] || '';
+
+  if (!activeSrc) {
     return (
       <div
         role="img"
@@ -33,10 +41,10 @@ export function ResilientImage({
 
   return (
     <img
-      src={src}
+      src={activeSrc}
       alt={alt}
       referrerPolicy="no-referrer"
-      onError={() => setHasError(true)}
+      onError={() => setAttemptIndex((prev) => prev + 1)}
       className={className}
     />
   );

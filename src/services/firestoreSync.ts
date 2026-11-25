@@ -820,12 +820,22 @@ export async function fetchGoogleSheetRows(
       },
     }
   );
-  const data = (await res.json()) as {
+  const rawText = await res.text();
+  let data: {
     headers?: string[];
     detectedPhotoHeaders?: string[];
     rows?: FormSubmissionRow[];
     error?: string;
-  };
+  } = {};
+  try {
+    data = JSON.parse(rawText);
+  } catch {
+    throw new Error(
+      res.ok
+        ? 'Respons server Google Sheet tidak valid.'
+        : 'Endpoint /api/google-sheet belum aktif di server ini.'
+    );
+  }
   if (!res.ok) {
     throw new Error(data.error || 'Gagal membaca Google Sheet.');
   }

@@ -687,7 +687,12 @@ async function startServer() {
 
     for (const targetUrl of candidates) {
       try {
-        const imgRes = await fetch(targetUrl);
+        const imgRes = await fetch(targetUrl, {
+          redirect: 'follow',
+          headers: {
+            'User-Agent': 'Mozilla/5.0',
+          },
+        });
         if (!imgRes.ok) continue;
 
         const rawType = (imgRes.headers.get('content-type') || '').toLowerCase();
@@ -702,6 +707,7 @@ async function startServer() {
           : sniffImageMime(buffer);
         if (!resolvedMime) continue;
 
+        res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Content-Type', resolvedMime);
         res.setHeader('Cache-Control', 'public, max-age=3600');
         res.send(buffer);

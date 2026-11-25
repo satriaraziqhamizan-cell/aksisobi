@@ -3,6 +3,7 @@ import QRCode from 'qrcode';
 import { MEDIA_ASSETS } from '../data/seedData';
 import type { EnrichedPlantJourney } from '../types/plantJourney';
 import { getPlantDirectUrl } from './qrLinks';
+import { getPhotoFallbackCandidates } from './drivePhoto';
 
 export const COCARD_WIDTH = 1122;
 export const COCARD_HEIGHT = 1594;
@@ -36,7 +37,7 @@ export const COCARD_LAYOUT = {
 
 const imageCache = new Map<string, HTMLImageElement>();
 
-function loadImageSafe(src: string): Promise<HTMLImageElement | null> {
+function loadSingleImage(src: string): Promise<HTMLImageElement | null> {
   if (!src) return Promise.resolve(null);
   const cached = imageCache.get(src);
   if (cached) return Promise.resolve(cached);
@@ -46,6 +47,7 @@ function loadImageSafe(src: string): Promise<HTMLImageElement | null> {
     if (!src.startsWith('data:') && !src.startsWith('/')) {
       img.crossOrigin = 'anonymous';
     }
+    img.referrerPolicy = 'no-referrer';
     img.onload = () => {
       imageCache.set(src, img);
       resolve(img);
@@ -53,6 +55,18 @@ function loadImageSafe(src: string): Promise<HTMLImageElement | null> {
     img.onerror = () => resolve(null);
     img.src = src;
   });
+}
+
+async function loadImageSafe(src: string): Promise<HTMLImageElement | null> {
+  const candidates = getPhotoFallbackCandidates(src);
+  for (const candidate of candidates) {
+    const loaded = await loadSingleImage(candidate);
+    if (loaded) {
+      imageCache.set(src, loaded);
+      return loaded;
+    }
+  }
+  return null;
 }
 
 function drawRoundedRectPath(
