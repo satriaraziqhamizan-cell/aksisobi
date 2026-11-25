@@ -1,6 +1,11 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, QrCode } from 'lucide-react';
-import { MEDIA_ASSETS, VOLUNTEER_FORM_URL } from '../data/seedData';
+import {
+  MEDIA_ASSETS,
+  SDG_PILLARS,
+  VOLUNTEER_FORM_URL,
+} from '../data/seedData';
 import { usePlantData } from '../context/PlantDataContext';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
@@ -8,6 +13,7 @@ import { ResilientImage } from '../components/ResilientImage';
 
 export function HomePage() {
   const { events, plants, movementStats: stats } = usePlantData();
+  const [sdgView, setSdgView] = useState<'focus' | 'all'>('focus');
 
   return (
     <div className="min-h-screen flex flex-col bg-white text-[#0F1F17]">
@@ -98,9 +104,9 @@ export function HomePage() {
           </div>
         </section>
 
-        {/* ABOUT MOVEMENT */}
+        {/* ABOUT MOVEMENT & SDG / TPB ALIGNMENT */}
         <section id="movement" className="bg-[#F6F8F6] py-20 sm:py-28">
-          <div className="max-w-[1200px] mx-auto px-6">
+          <div className="max-w-[1200px] mx-auto px-6 space-y-20">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-stretch">
               <div className="lg:col-span-6 flex flex-col order-2 lg:order-1">
                 <div className="flex-1 min-h-[340px] rounded-2xl overflow-hidden border border-zinc-200 bg-white">
@@ -161,6 +167,132 @@ export function HomePage() {
                     </span>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* BERSINERGI & BERKELANJUTAN — SDG / TPB SHOWCASE */}
+            <div
+              id="sdg"
+              className="pt-16 border-t border-zinc-200 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center"
+            >
+              <div className="lg:col-span-5 space-y-3">
+                <div className="rounded-2xl border border-zinc-200 bg-white p-5 sm:p-7">
+                  <ResilientImage
+                    src={MEDIA_ASSETS.pfEcosystemVisual}
+                    alt="Ekosistem keberlanjutan Pertamina Foundation: penanaman pohon, energi surya, akses air bersih, dan pemberdayaan masyarakat"
+                    fallbackTitle="Ekosistem Keberlanjutan Pertamina Foundation"
+                    className="w-full h-auto object-contain"
+                  />
+                </div>
+                <p className="text-xs text-[#4E6156] leading-relaxed">
+                  Sinergi pelestarian lingkungan, energi bersih, air bersih, dan
+                  pemberdayaan masyarakat dalam ekosistem Pertamina Foundation.
+                </p>
+              </div>
+
+              <div className="lg:col-span-7 space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                  <div className="space-y-2 max-w-xl">
+                    <p className="text-sm font-medium text-[#166534]">
+                      Bersinergi &amp; Berkelanjutan · TPB / SDG
+                    </p>
+                    <h2 className="text-3xl sm:text-4xl font-semibold leading-tight text-[#0F1F17]">
+                      Kontribusi pada Tujuan Pembangunan Berkelanjutan.
+                    </h2>
+                  </div>
+
+                  <div
+                    role="tablist"
+                    aria-label="Tampilan peta SDG"
+                    className="inline-flex items-center gap-1 p-1 bg-white border border-zinc-200 rounded-lg self-start shrink-0"
+                  >
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={sdgView === 'focus'}
+                      onClick={() => setSdgView('focus')}
+                      className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 ${
+                        sdgView === 'focus'
+                          ? 'bg-[#14532D] text-white'
+                          : 'text-[#4E6156] hover:text-[#0F1F17]'
+                      }`}
+                    >
+                      Fokus SDG 4 · 7 · 13
+                    </button>
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={sdgView === 'all'}
+                      onClick={() => setSdgView('all')}
+                      className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 ${
+                        sdgView === 'all'
+                          ? 'bg-[#14532D] text-white'
+                          : 'text-[#4E6156] hover:text-[#0F1F17]'
+                      }`}
+                    >
+                      17 Peta TPB Lengkap
+                    </button>
+                  </div>
+                </div>
+
+                <p className="text-base text-[#4E6156] leading-relaxed">
+                  Strategi keberlanjutan Pertamina Foundation mengintegrasikan
+                  program Tanggung Jawab Sosial dan Lingkungan (TJSL) ke dalam
+                  inisiatif nyata—termasuk gerakan Aksi Sobat Bumi Universitas
+                  Jambi—untuk berkontribusi langsung pada pencapaian Tujuan
+                  Pembangunan Berkelanjutan (TPB/SDG).
+                </p>
+
+                {sdgView === 'focus' ? (
+                  <div className="space-y-6">
+                    <div className="aspect-[1980/254] rounded-xl overflow-hidden border border-zinc-200 bg-white">
+                      <ResilientImage
+                        src={MEDIA_ASSETS.sdgFocusBanner}
+                        alt="Tiga pilar SDG utama: 4 Pendidikan Berkualitas, 7 Energi Bersih dan Terjangkau, 13 Penanganan Perubahan Iklim"
+                        fallbackTitle="SDG 4, SDG 7, dan SDG 13"
+                        className="w-full h-full object-cover object-top"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-1">
+                      {SDG_PILLARS.map((pillar) => (
+                        <div
+                          key={pillar.code}
+                          className="pt-4 border-t border-zinc-300/80 space-y-2"
+                        >
+                          <p className="font-mono text-xs font-semibold text-[#166534] tabular-nums">
+                            {pillar.code}
+                          </p>
+                          <h3 className="text-base font-semibold text-[#0F1F17]">
+                            {pillar.title}
+                          </h3>
+                          <p className="text-xs text-[#4E6156] leading-relaxed">
+                            {pillar.summary}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="rounded-xl overflow-hidden border border-zinc-200 bg-white p-2">
+                      <ResilientImage
+                        src={MEDIA_ASSETS.sdgFullGrid}
+                        alt="17 Tujuan Pembangunan Berkelanjutan (TPB) Indonesia yang menjadi acuan program Pertamina Foundation"
+                        fallbackTitle="17 Tujuan Pembangunan Berkelanjutan (TPB)"
+                        className="w-full h-auto object-contain"
+                      />
+                    </div>
+                    <p className="text-xs text-[#4E6156] leading-relaxed">
+                      Seluruh portofolio program Pertamina Foundation—mulai dari{' '}
+                      <span className="font-medium text-[#0F1F17]">
+                        PF-Lestari, Aksi Sobat Bumi, PF-Muda, hingga PF-Preneur
+                      </span>
+                      —dipetakan untuk mendukung 17 Tujuan Pembangunan
+                      Berkelanjutan secara terukur.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>

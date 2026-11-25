@@ -26,6 +26,35 @@ export async function signOutFirebase() {
   return signOut(auth);
 }
 
+export async function checkDomainAuthorizedInFirebase(
+  hostname: string
+): Promise<'authorized' | 'unauthorized' | 'unknown'> {
+  if (!hostname || !firebaseConfig.apiKey) {
+    return 'unknown';
+  }
+  try {
+    const res = await fetch(
+      `https://identitytoolkit.googleapis.com/v1/projects?key=${encodeURIComponent(firebaseConfig.apiKey)}`,
+      { cache: 'no-store' }
+    );
+    if (!res.ok) {
+      return 'unknown';
+    }
+    const data = (await res.json()) as { authorizedDomains?: unknown };
+    const domains = Array.isArray(data?.authorizedDomains)
+      ? data.authorizedDomains.filter((d): d is string => typeof d === 'string')
+      : [];
+    const target = hostname.trim().toLowerCase();
+    const matched = domains.some((domain) => {
+      const normalized = domain.trim().toLowerCase();
+      return normalized === target || target.endsWith(`.${normalized}`);
+    });
+    return matched ? 'authorized' : 'unauthorized';
+  } catch {
+    return 'unknown';
+  }
+}
+
 export enum OperationType {
   CREATE = 'create',
   UPDATE = 'update',

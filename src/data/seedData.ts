@@ -32,7 +32,108 @@ export const MEDIA_ASSETS = {
     '/assets/aistudio/Cocard_Aksi_Sobi_9.5x13.5cm_full_bleed_9c5082ad.png',
   cardBackTemplate:
     '/assets/aistudio/Bagian_Belakang_Cocard_Aksi_Sobi_9.5x13.5cm_full_bleed_91f39e71.png',
+  sdgFocusBanner: '/assets/aistudio/image_25ded065.png',
+  sdgEducationTile: '/assets/aistudio/image_0d4acb1b.png',
+  sdgClimateTile: '/assets/aistudio/image_655e5618.png',
+  sdgFullGrid: '/assets/aistudio/image_ab65313b.png',
+  pfEcosystemVisual: '/assets/aistudio/image_64c744e4.png',
+  pfSroiImpact: '/assets/aistudio/image_7edaf7ca.png',
 };
+
+export interface SdgPillarHighlight {
+  code: string;
+  title: string;
+  englishTitle: string;
+  summary: string;
+  tileImage?: string;
+  accentHex: string;
+}
+
+export const SDG_PILLARS: SdgPillarHighlight[] = [
+  {
+    code: 'SDG 04',
+    title: 'Pendidikan Berkualitas',
+    englishTitle: 'Quality Education',
+    summary:
+      'Mendorong literasi lingkungan di kalangan mahasiswa Sobat Bumi, sekolah mitra, dan masyarakat lokal melalui aksi belajar langsung di lapangan.',
+    tileImage: MEDIA_ASSETS.sdgEducationTile,
+    accentHex: '#C5192D',
+  },
+  {
+    code: 'SDG 07',
+    title: 'Energi Bersih dan Terjangkau',
+    englishTitle: 'Affordable and Clean Energy',
+    summary:
+      'Menyelaraskan gerakan mahasiswa dengan transisi energi bersih dan pemanfaatan energi terbarukan berbasis komunitas.',
+    accentHex: '#FCC30B',
+  },
+  {
+    code: 'SDG 13',
+    title: 'Penanganan Perubahan Iklim',
+    englishTitle: 'Climate Action',
+    summary:
+      'Memperluas tutupan vegetasi dan serapan karbon melalui penanaman bibit pohon terpantau dengan identitas QR Code per relawan.',
+    tileImage: MEDIA_ASSETS.sdgClimateTile,
+    accentHex: '#3F7E44',
+  },
+];
+
+export interface PfInitiativeExample {
+  id: string;
+  indexLabel: string;
+  programName: string;
+  category: string;
+  sdgAlignment: string;
+  description: string;
+  impactHighlight: string;
+}
+
+export const PF_PREVIOUS_INITIATIVES: PfInitiativeExample[] = [
+  {
+    id: 'pf-lestari',
+    indexLabel: '01',
+    programName: 'PF-Lestari & Hutan Pertamina',
+    category: 'Pelestarian Lingkungan',
+    sdgAlignment: 'SDG 13 · Perubahan Iklim & SDG 15 · Ekosistem Daratan',
+    description:
+      'Program pelestarian alam melalui rehabilitasi mangrove pesisir, penanaman pohon endemik di daerah aliran sungai, dan perlindungan keanekaragaman hayati bersama masyarakat lokal.',
+    impactHighlight:
+      'Penyerapan emisi karbon berkelanjutan & pemulihan ekosistem pesisir maupun hulu.',
+  },
+  {
+    id: 'pf-sobat-bumi',
+    indexLabel: '02',
+    programName: 'Aksi Sobat Bumi Lintas Kampus',
+    category: 'Edukasi & Relawan Muda',
+    sdgAlignment: 'SDG 04 · Pendidikan Berkualitas & SDG 13 · Perubahan Iklim',
+    description:
+      'Inisiatif nyata penerima Beasiswa Pertamina Sobat Bumi di berbagai perguruan tinggi Indonesia—termasuk Universitas Jambi—dalam menanam pohon, mengelola sampah terpilah, dan mengedukasi warga.',
+    impactHighlight:
+      'Menghubungkan mahasiswa penerima beasiswa dengan aksi ekologis terukur di daerah.',
+  },
+  {
+    id: 'pf-energi-air',
+    indexLabel: '03',
+    programName: 'Desa Energi Berdikari & Akses Air Bersih',
+    category: 'Energi Bersih & Komunitas',
+    sdgAlignment: 'SDG 07 · Energi Bersih & SDG 06 · Air Bersih',
+    description:
+      'Penerapan pembangkit listrik tenaga surya (PLTS) skala komunitas dan sarana air bersih bagi desa binaan guna mendukung aktivitas produktif warga secara rendah emisi.',
+    impactHighlight:
+      'Kemandirian energi terbarukan desa binaan dengan rasio dampak sosial terukur (SROI 3,45).',
+  },
+  {
+    id: 'pf-muda-preneur',
+    indexLabel: '04',
+    programName: 'PF-Muda & PF-Preneur UMKM Hijau',
+    category: 'Inovasi Sosial & Ekonomi',
+    sdgAlignment: 'SDG 08 · Ekonomi Berkelanjutan & SDG 12 · Konsumsi Bertanggung Jawab',
+    description:
+      'Pendampingan proyek sosial kepemudaan (PF-Muda) serta penguatan UMKM perempuan (PF-Preneur) yang mengolah produk lokal ramah lingkungan bernilai tambah.',
+    impactHighlight:
+      'Kolaborasi inovasi sosial anak muda dan pemberdayaan ekonomi masyarakat sekitar.',
+  },
+];
 
 export const CARD_TEMPLATES: CardTemplateOption[] = [
   {

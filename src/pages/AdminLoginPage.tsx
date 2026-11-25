@@ -1,8 +1,19 @@
 import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { ArrowRight, ExternalLink, LogOut, ShieldCheck } from 'lucide-react';
+import {
+  ArrowRight,
+  ExternalLink,
+  LogOut,
+  RefreshCw,
+  ShieldCheck,
+} from 'lucide-react';
 import firebaseConfig from '../../firebase-applet-config.json';
-import { ADMIN_EMAIL, signInWithGooglePopup, signOutFirebase } from '../firebase';
+import {
+  ADMIN_EMAIL,
+  checkDomainAuthorizedInFirebase,
+  signInWithGooglePopup,
+  signOutFirebase,
+} from '../firebase';
 import { usePlantData } from '../context/PlantDataContext';
 import { MEDIA_ASSETS } from '../data/seedData';
 import { Navbar } from '../components/Navbar';
@@ -14,6 +25,9 @@ export function AdminLoginPage() {
   const { authReady, user, isAdmin } = usePlantData();
   const [error, setError] = useState('');
   const [unauthorizedHost, setUnauthorizedHost] = useState('');
+  const [domainCheckStatus, setDomainCheckStatus] = useState<
+    'idle' | 'checking' | 'authorized' | 'unauthorized' | 'unknown'
+  >('idle');
   const [submitting, setSubmitting] = useState(false);
 
   if (authReady && isAdmin) {
@@ -23,6 +37,7 @@ export function AdminLoginPage() {
   const handleGoogleSignIn = async () => {
     setError('');
     setUnauthorizedHost('');
+    setDomainCheckStatus('idle');
     setSubmitting(true);
     try {
       const cred = await signInWithGooglePopup();
@@ -48,9 +63,18 @@ export function AdminLoginPage() {
         const host =
           typeof window !== 'undefined' ? window.location.hostname : '';
         setUnauthorizedHost(host);
-        setError(
-          `Domain "${host}" belum didaftarkan di Authorized Domains Firebase Authentication.`
-        );
+        setDomainCheckStatus('checking');
+        const liveStatus = await checkDomainAuthorizedInFirebase(host);
+        setDomainCheckStatus(liveStatus);
+        if (liveStatus === 'authorized') {
+          setError(
+            `Domain "${host}" sebenarnya sudah terdaftar di Firebase, tetapi tab browser ini masih menyimpan cache validasi login sebelumnya.`
+          );
+        } else {
+          setError(
+            `Domain "${host}" belum didaftarkan atau belum selesai tersinkron di Authorized Domains Firebase Authentication.`
+          );
+        }
       } else if (
         code === 'auth/popup-blocked' ||
         msg.includes('popup-blocked')
@@ -77,8 +101,13 @@ export function AdminLoginPage() {
   const handleSwitchAccount = async () => {
     setError('');
     setUnauthorizedHost('');
+    setDomainCheckStatus('idle');
     await signOutFirebase();
     await handleGoogleSignIn();
+  };
+
+  const handleHardReload = () => {
+    window.location.reload();
   };
 
   const firebaseAuthSettingsUrl = `https://console.firebase.google.com/project/${firebaseConfig.projectId}/authentication/settings`;
@@ -124,38 +153,79 @@ export function AdminLoginPage() {
                 className="p-4 text-xs bg-red-50 border border-red-200 text-red-900 rounded-xl space-y-2.5 leading-relaxed"
               >
                 <p className="font-semibold">{error}</p>
-                {unauthorizedHost && (
-                  <div className="space-y-2 pt-1 border-t border-red-200/80 text-red-900/90">
-                    <p>Cara mengizinkan domain ini agar bisa login Google:</p>
-                    <ol className="list-decimal pl-4 space-y-1">
-                      <li>
-                        Buka{' '}
-                        <strong>
-                          Firebase Console → Authentication → Settings →
-                          Authorized domains
-                        </strong>
-                        .
-                      </li>
-                      <li>
-                        Klik <strong>Add domain</strong>, lalu masukkan{' '}
-                        <span className="font-mono font-semibold bg-white px-1.5 py-0.5 rounded border border-red-200">
-                          {unauthorizedHost}
-                        </span>
-                        .
-                      </li>
-                      <li>Simpan, lalu klik tombol masuk di bawah ini lagi.</li>
-                    </ol>
-                    <a
-                      href={firebaseAuthSettingsUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 font-semibold text-[#14532D] underline hover:text-[#166534]"
+                {unauthorizedHost && domainCheckStatus === 'checking' && (
+                  <p className="text-red-800">
+                    Sedang mengecek status domain di server Firebase...
+                  </p>
+                )}
+                {unauthorizedHost && domainCheckStatus === 'authorized' && (
+                  <div className="space-y-2.5 pt-2 border-t border-red-200/80 text-red-900/90">
+                    <p>
+                      Firebase SDK di tab browser yang sama menyimpan hasil gagal
+                      sebelumnya sampai halaman dimuat ulang. Klik tombol di
+                      bawah untuk memuat ulang halaman (atau tekan{' '}
+                      <span className="font-mono font-semibold bg-white px-1.5 py-0.5 rounded border border-red-200">
+                        Ctrl+Shift+R
+                      </span>{' '}
+                      / coba di jendela Incognito).
+                    </p>
+                    <button
+                      type="button"
+                      onClick={handleHardReload}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#14532D] text-white font-semibold hover:bg-[#166534] transition-colors"
                     >
-                      Buka Pengaturan Authorized Domains Firebase
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      Muat Ulang Halaman &amp; Coba Login
+                    </button>
                   </div>
                 )}
+                {unauthorizedHost &&
+                  domainCheckStatus !== 'checking' &&
+                  domainCheckStatus !== 'authorized' && (
+                    <div className="space-y-2 pt-1 border-t border-red-200/80 text-red-900/90">
+                      <p>Cara mengizinkan domain ini agar bisa login Google:</p>
+                      <ol className="list-decimal pl-4 space-y-1">
+                        <li>
+                          Buka{' '}
+                          <strong>
+                            Firebase Console ({firebaseConfig.projectId}) →
+                            Authentication → Settings → Authorized domains
+                          </strong>
+                          .
+                        </li>
+                        <li>
+                          Klik <strong>Add domain</strong>, lalu masukkan{' '}
+                          <span className="font-mono font-semibold bg-white px-1.5 py-0.5 rounded border border-red-200">
+                            {unauthorizedHost}
+                          </span>
+                          .
+                        </li>
+                        <li>
+                          Simpan, tunggu ±1 menit, lalu muat ulang halaman ini
+                          sebelum mencoba masuk lagi.
+                        </li>
+                      </ol>
+                      <div className="flex flex-wrap items-center gap-3 pt-1">
+                        <button
+                          type="button"
+                          onClick={handleHardReload}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#14532D] text-white font-semibold hover:bg-[#166534] transition-colors"
+                        >
+                          <RefreshCw className="w-3.5 h-3.5" />
+                          Muat Ulang Halaman
+                        </button>
+                        <a
+                          href={firebaseAuthSettingsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 font-semibold text-[#14532D] underline hover:text-[#166534]"
+                        >
+                          Buka Pengaturan Authorized Domains Firebase
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                      </div>
+                    </div>
+                  )}
               </div>
             )}
 
