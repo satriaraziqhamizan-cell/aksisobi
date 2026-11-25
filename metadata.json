@@ -1,6 +1,6 @@
 {
   "name": "Aksi Sobat Bumi — My Plant Journey",
   "description": "One Plant. One Story. One Greener Future. Platform perjalanan tanaman personal, katalog pohon, dan kartu QR digital untuk kegiatan penanaman pohon Aksi Sobat Bumi.",
-  "requestFramePermissions": [],
+  "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

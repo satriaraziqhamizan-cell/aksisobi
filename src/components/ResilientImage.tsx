@@ -21,10 +21,10 @@ export function ResilientImage({
       <div
         role="img"
         aria-label={alt}
-        className={`flex flex-col items-center justify-center bg-gradient-to-br from-[#284B34] to-[#14271B] text-[#FAF9F4] p-6 text-center ${className}`}
+        className={`flex flex-col items-center justify-center bg-gradient-to-br from-[#14532D] to-[#0F2419] text-white p-6 text-center ${className}`}
       >
-        <Sprout className="w-8 h-8 text-[#B4D36C] mb-2 opacity-90" strokeWidth={1.5} />
-        <span className="font-editorial text-sm font-medium tracking-wide">
+        <Sprout className="w-8 h-8 text-[#A3E635] mb-2 opacity-90" strokeWidth={1.5} />
+        <span className="text-sm font-medium tracking-wide">
           {fallbackTitle || alt}
         </span>
       </div>

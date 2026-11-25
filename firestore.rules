@@ -1,0 +1,261 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global safety net: default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Reusable Primitives ---
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isVerifiedUser() && (
+        request.auth.token.email == 'satriaraziq07@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // --- Validation Helpers ---
+    function isValidPlantSpecies(data) {
+      return data.keys().hasAll([
+        'id', 'plantCode', 'plantName', 'scientificName', 'category',
+        'mainImage', 'overview', 'characteristics', 'benefits', 'careGuide', 'createdAt'
+      ]) &&
+      data.keys().hasOnly([
+        'id', 'plantCode', 'plantName', 'scientificName', 'category',
+        'mainImage', 'overview', 'characteristics', 'benefits', 'careGuide', 'createdAt'
+      ]) &&
+      isValidId(data.id) &&
+      data.plantCode is string && data.plantCode.size() >= 1 && data.plantCode.size() <= 24 &&
+      data.plantName is string && data.plantName.size() >= 1 && data.plantName.size() <= 100 &&
+      data.scientificName is string && data.scientificName.size() >= 1 && data.scientificName.size() <= 140 &&
+      data.category is string && data.category.size() >= 1 && data.category.size() <= 100 &&
+      data.mainImage is string && data.mainImage.size() <= 220000 &&
+      data.overview is string && data.overview.size() >= 1 && data.overview.size() <= 1200 &&
+      data.characteristics is map &&
+      data.benefits is list && data.benefits.size() <= 10 &&
+      (data.benefits.size() == 0 || data.benefits[0] is string) &&
+      data.careGuide is map &&
+      data.createdAt is string && data.createdAt.size() <= 60;
+    }
+
+    function isValidEventItem(data) {
+      return data.keys().hasAll([
+        'id', 'slug', 'eventName', 'eventDate', 'eventLocation', 'description',
+        'fullStory', 'coverImage', 'registrationUrl', 'status',
+        'treesPlantedTarget', 'volunteerCount', 'createdAt'
+      ]) &&
+      data.keys().hasOnly([
+        'id', 'slug', 'eventName', 'eventDate', 'eventLocation', 'description',
+        'fullStory', 'coverImage', 'registrationUrl', 'status',
+        'treesPlantedTarget', 'volunteerCount', 'createdAt'
+      ]) &&
+      isValidId(data.id) &&
+      data.slug is string && data.slug.size() >= 1 && data.slug.size() <= 120 &&
+      data.eventName is string && data.eventName.size() >= 1 && data.eventName.size() <= 160 &&
+      data.eventDate is string && data.eventDate.size() >= 1 && data.eventDate.size() <= 60 &&
+      data.eventLocation is string && data.eventLocation.size() >= 1 && data.eventLocation.size() <= 200 &&
+      data.description is string && data.description.size() >= 1 && data.description.size() <= 600 &&
+      data.fullStory is string && data.fullStory.size() >= 1 && data.fullStory.size() <= 1600 &&
+      data.coverImage is string && data.coverImage.size() <= 220000 &&
+      data.registrationUrl is string && data.registrationUrl.size() <= 400 &&
+      data.status in ['Completed', 'Upcoming'] &&
+      data.treesPlantedTarget is number && data.treesPlantedTarget >= 0 && data.treesPlantedTarget <= 1000000 &&
+      data.volunteerCount is number && data.volunteerCount >= 0 && data.volunteerCount <= 1000000 &&
+      data.createdAt is string && data.createdAt.size() <= 60;
+    }
+
+    function isValidPlantJourney(data) {
+      return data.keys().hasAll([
+        'plantIdCode', 'participantCode', 'fullName', 'plantId', 'eventId',
+        'plantingDate', 'location', 'cardFrontPhoto', 'plantPhoto',
+        'participantPlantPhoto', 'personalMessage', 'beginningTitle',
+        'beginningDescription', 'templateId', 'status', 'sourceFingerprint',
+        'createdAt', 'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'plantIdCode', 'participantCode', 'fullName', 'studyProgram', 'plantId', 'eventId',
+        'plantingDate', 'location', 'cardFrontPhoto', 'plantPhoto',
+        'participantPlantPhoto', 'personalMessage', 'beginningTitle',
+        'beginningDescription', 'templateId', 'status', 'sourceFingerprint',
+        'createdAt', 'updatedAt'
+      ]) &&
+      data.plantIdCode is string && data.plantIdCode.size() >= 3 && data.plantIdCode.size() <= 24 &&
+      data.plantIdCode.matches('^[A-Z0-9_\\-]+$') &&
+      data.participantCode is string && data.participantCode.size() >= 1 && data.participantCode.size() <= 24 &&
+      data.fullName is string && data.fullName.size() >= 1 && data.fullName.size() <= 120 &&
+      (!('studyProgram' in data) || (data.studyProgram is string && data.studyProgram.size() <= 120)) &&
+      data.plantId is string && data.plantId.size() >= 1 && data.plantId.size() <= 80 &&
+      data.eventId is string && data.eventId.size() >= 1 && data.eventId.size() <= 80 &&
+      data.plantingDate is string && data.plantingDate.size() >= 1 && data.plantingDate.size() <= 60 &&
+      data.location is string && data.location.size() >= 1 && data.location.size() <= 200 &&
+      data.cardFrontPhoto is string && data.cardFrontPhoto.size() <= 220000 &&
+      data.plantPhoto is string && data.plantPhoto.size() <= 220000 &&
+      data.participantPlantPhoto is string && data.participantPlantPhoto.size() <= 220000 &&
+      data.personalMessage is string && data.personalMessage.size() <= 600 &&
+      data.beginningTitle is string && data.beginningTitle.size() >= 1 && data.beginningTitle.size() <= 140 &&
+      data.beginningDescription is string && data.beginningDescription.size() >= 1 && data.beginningDescription.size() <= 600 &&
+      data.templateId in ['forest', 'botanical', 'earth'] &&
+      data.status in ['Published', 'Draft'] &&
+      data.sourceFingerprint is string && data.sourceFingerprint.size() <= 160 &&
+      data.createdAt is timestamp &&
+      data.updatedAt is timestamp;
+    }
+
+    function isValidGrowthUpdate(data) {
+      return data.keys().hasAll([
+        'id', 'plantRecordCode', 'dayLabel', 'updateDate', 'photo',
+        'title', 'description', 'status', 'authorUid', 'createdAt'
+      ]) &&
+      data.keys().hasOnly([
+        'id', 'plantRecordCode', 'dayLabel', 'updateDate', 'photo',
+        'title', 'description', 'status', 'authorUid', 'createdAt'
+      ]) &&
+      isValidId(data.id) &&
+      data.plantRecordCode is string && data.plantRecordCode.size() >= 3 && data.plantRecordCode.size() <= 24 &&
+      data.dayLabel is string && data.dayLabel.size() >= 1 && data.dayLabel.size() <= 40 &&
+      data.updateDate is string && data.updateDate.size() >= 1 && data.updateDate.size() <= 40 &&
+      data.photo is string && data.photo.size() <= 220000 &&
+      data.title is string && data.title.size() >= 1 && data.title.size() <= 140 &&
+      data.description is string && data.description.size() >= 1 && data.description.size() <= 600 &&
+      data.status == 'Published' &&
+      data.authorUid is string && data.authorUid.size() <= 128 &&
+      data.createdAt is timestamp;
+    }
+
+    function isValidIntegrationSettings(data) {
+      return data.keys().hasAll([
+        'sheetUrl', 'defaultPlantId', 'defaultEventId', 'defaultPlantingDate',
+        'defaultLocation', 'defaultTemplateId', 'autoSyncEnabled', 'lastSyncedAt', 'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'sheetUrl', 'defaultPlantId', 'defaultEventId', 'defaultPlantingDate',
+        'defaultLocation', 'defaultTemplateId', 'autoSyncEnabled', 'lastSyncedAt', 'updatedAt'
+      ]) &&
+      data.sheetUrl is string && data.sheetUrl.size() <= 500 &&
+      data.defaultPlantId is string && data.defaultPlantId.size() <= 80 &&
+      data.defaultEventId is string && data.defaultEventId.size() <= 80 &&
+      data.defaultPlantingDate is string && data.defaultPlantingDate.size() <= 60 &&
+      data.defaultLocation is string && data.defaultLocation.size() <= 200 &&
+      data.defaultTemplateId in ['forest', 'botanical', 'earth'] &&
+      data.autoSyncEnabled is bool &&
+      data.lastSyncedAt is string && data.lastSyncedAt.size() <= 60 &&
+      data.updatedAt is timestamp;
+    }
+
+    // --- Test Connection Doc ---
+    match /test/connection {
+      allow get: if true;
+    }
+
+    // --- Admin Role Collection ---
+    match /admins/{uid} {
+      allow get: if isValidId(uid) && isAdmin();
+      allow list, create, update, delete: if false;
+    }
+
+    // --- Plant Species Catalog ---
+    match /plants/{plantId} {
+      allow get: if isValidId(plantId);
+      allow list: if true;
+      allow create: if isAdmin() && isValidId(plantId) && isValidPlantSpecies(incoming());
+      allow update: if isAdmin() && isValidId(plantId) && isValidPlantSpecies(incoming()) &&
+        incoming().id == existing().id && incoming().createdAt == existing().createdAt;
+      allow delete: if isAdmin() && isValidId(plantId);
+    }
+
+    // --- Green Action Events ---
+    match /events/{eventId} {
+      allow get: if isValidId(eventId);
+      allow list: if true;
+      allow create: if isAdmin() && isValidId(eventId) && isValidEventItem(incoming());
+      allow update: if isAdmin() && isValidId(eventId) && isValidEventItem(incoming()) &&
+        incoming().id == existing().id && incoming().createdAt == existing().createdAt;
+      allow delete: if isAdmin() && isValidId(eventId);
+    }
+
+    // --- Published Plant Journeys ---
+    match /plantJourneys/{recordCode} {
+      allow get: if isValidId(recordCode) && (existing().status == 'Published' || isAdmin());
+      allow list: if existing().status == 'Published' || isAdmin();
+      allow create: if isAdmin() && isValidId(recordCode) &&
+        isValidPlantJourney(incoming()) &&
+        incoming().plantIdCode == recordCode &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time &&
+        exists(/databases/$(database)/documents/plants/$(incoming().plantId)) &&
+        exists(/databases/$(database)/documents/events/$(incoming().eventId));
+      allow update: if isValidId(recordCode) && isValidPlantJourney(incoming()) &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        incoming().plantIdCode == existing().plantIdCode && (
+          isAdmin() ||
+          (
+            isVerifiedUser() &&
+            existing().status == 'Published' &&
+            incoming().status == existing().status &&
+            incoming().fullName == existing().fullName &&
+            incoming().plantId == existing().plantId &&
+            incoming().eventId == existing().eventId &&
+            incoming().cardFrontPhoto == existing().cardFrontPhoto &&
+            incoming().diff(existing()).affectedKeys().hasOnly([
+              'participantPlantPhoto', 'plantPhoto', 'personalMessage', 'updatedAt'
+            ])
+          )
+        );
+      allow delete: if isAdmin() && isValidId(recordCode);
+
+      // --- Growth Updates Subcollection ---
+      match /growthUpdates/{updateId} {
+        allow get: if isValidId(recordCode) && isValidId(updateId) &&
+          (existing().status == 'Published' || isAdmin());
+        allow list: if isValidId(recordCode) && (existing().status == 'Published' || isAdmin());
+        allow create: if isValidId(recordCode) && isValidId(updateId) &&
+          isVerifiedUser() &&
+          isValidGrowthUpdate(incoming()) &&
+          incoming().id == updateId &&
+          incoming().plantRecordCode == recordCode &&
+          incoming().createdAt == request.time &&
+          (isAdmin() || incoming().authorUid == request.auth.uid) &&
+          exists(/databases/$(database)/documents/plantJourneys/$(recordCode)) &&
+          get(/databases/$(database)/documents/plantJourneys/$(recordCode)).data.status == 'Published';
+        allow update: if isAdmin() && isValidId(recordCode) && isValidId(updateId) &&
+          isValidGrowthUpdate(incoming()) &&
+          incoming().id == existing().id &&
+          incoming().plantRecordCode == existing().plantRecordCode &&
+          incoming().createdAt == existing().createdAt;
+        allow delete: if isAdmin() && isValidId(recordCode) && isValidId(updateId);
+      }
+    }
+
+    // --- Admin-only Google Form / Sheet Integration Settings ---
+    match /settings/{settingId} {
+      allow get: if isValidId(settingId) && isAdmin();
+      allow list: if isAdmin();
+      allow create, update: if isValidId(settingId) && isAdmin() &&
+        isValidIntegrationSettings(incoming()) &&
+        incoming().updatedAt == request.time;
+      allow delete: if isAdmin() && isValidId(settingId);
+    }
+  }
+}

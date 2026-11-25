@@ -1,8 +1,21 @@
-import { useState } from 'react';
-import { RotateCw, Printer } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import QRCode from 'qrcode';
+import {
+  Camera,
+  Download,
+  FileArchive,
+  Loader2,
+  Printer,
+  RotateCw,
+} from 'lucide-react';
 import type { CardTemplateId, EnrichedPlantJourney } from '../types/plantJourney';
-import { QRDisplay } from './QRDisplay';
+import { MEDIA_ASSETS } from '../data/seedData';
 import { ResilientImage } from './ResilientImage';
+import { getPlantDirectUrl } from '../utils/qrLinks';
+import {
+  downloadParticipantCocardZip,
+  downloadSingleCocardSide,
+} from '../utils/cocardExporter';
 
 interface PlantCardProps {
   journey: EnrichedPlantJourney;
@@ -12,130 +25,124 @@ interface PlantCardProps {
   defaultShowBothSides?: boolean;
 }
 
-const TEMPLATE_STYLES: Record<
-  CardTemplateId,
-  {
-    frontBg: string;
-    frontText: string;
-    frontMuted: string;
-    frontAccent: string;
-    frontBorder: string;
-    backBg: string;
-    backText: string;
-    backMuted: string;
-    backBorder: string;
-  }
-> = {
-  forest: {
-    frontBg: 'bg-[#14271B]',
-    frontText: 'text-[#FAF9F4]',
-    frontMuted: 'text-[#FAF9F4]/70',
-    frontAccent: 'text-[#B4D36C]',
-    frontBorder: 'border-[#284B34]',
-    backBg: 'bg-[#1b3424]',
-    backText: 'text-[#FAF9F4]',
-    backMuted: 'text-[#FAF9F4]/70',
-    backBorder: 'border-[#B4D36C]/30',
-  },
-  botanical: {
-    frontBg: 'bg-[#F4F0E4]',
-    frontText: 'text-[#14271B]',
-    frontMuted: 'text-[#14271B]/65',
-    frontAccent: 'text-[#284B34]',
-    frontBorder: 'border-[#647C45]/35',
-    backBg: 'bg-[#FAF9F4]',
-    backText: 'text-[#14271B]',
-    backMuted: 'text-[#14271B]/65',
-    backBorder: 'border-[#647C45]/35',
-  },
-  earth: {
-    frontBg: 'bg-[#765A3A]',
-    frontText: 'text-[#FAF9F4]',
-    frontMuted: 'text-[#FAF9F4]/75',
-    frontAccent: 'text-[#F4F0E4]',
-    frontBorder: 'border-[#FAF9F4]/25',
-    backBg: 'bg-[#5c452b]',
-    backText: 'text-[#FAF9F4]',
-    backMuted: 'text-[#FAF9F4]/75',
-    backBorder: 'border-[#FAF9F4]/25',
-  },
-};
-
 export function PlantCard({
   journey,
-  templateId: initialTemplateId,
-  allowTemplateSwitch = false,
   showPrintButton = false,
   defaultShowBothSides = false,
 }: PlantCardProps) {
-  const [selectedTemplate, setSelectedTemplate] = useState<CardTemplateId>(
-    initialTemplateId || journey.record.templateId || 'forest'
-  );
   const [isFlipped, setIsFlipped] = useState(false);
   const [viewMode, setViewMode] = useState<'flip' | 'both'>(
     defaultShowBothSides ? 'both' : 'flip'
   );
-  const [useRegistrationPhoto, setUseRegistrationPhoto] = useState<boolean>(
-    Boolean(journey.record.cardFrontPhoto)
-  );
+  const [qrDataUrl, setQrDataUrl] = useState<string>('');
+  const [downloadingAction, setDownloadingAction] = useState<
+    null | 'front' | 'back' | 'zip'
+  >(null);
+  const [downloadError, setDownloadError] = useState('');
 
-  const theme = TEMPLATE_STYLES[selectedTemplate];
-  const year = journey.record.plantingDate.split(' ').pop() || '2026';
+  const targetUrl = getPlantDirectUrl(journey.record.plantIdCode);
 
-  const frontVisual =
-    useRegistrationPhoto && journey.record.cardFrontPhoto
-      ? journey.record.cardFrontPhoto
-      : journey.plant.mainImage;
+  useEffect(() => {
+    let active = true;
+    QRCode.toDataURL(targetUrl, {
+      width: 600,
+      margin: 0,
+      errorCorrectionLevel: 'M',
+      color: {
+        dark: '#0F1F17',
+        light: '#FFFFFF',
+      },
+    })
+      .then((url) => {
+        if (active) setQrDataUrl(url);
+      })
+      .catch(() => {
+        if (active) setQrDataUrl('');
+      });
+    return () => {
+      active = false;
+    };
+  }, [targetUrl]);
 
-  const frontVisualAlt =
-    useRegistrationPhoto && journey.record.cardFrontPhoto
-      ? `${journey.participant.fullName} — Foto Kartu Depan`
-      : journey.plant.plantName;
+  const standalonePhoto = journey.record.cardFrontPhoto?.trim() || '';
+  const displayName = journey.participant.fullName.trim().toUpperCase();
+  const displayProdi = (
+    journey.participant.studyProgram?.trim() || 'RELAWAN SOBAT BUMI'
+  ).toUpperCase();
+
+  const handleDownload = async (action: 'front' | 'back' | 'zip') => {
+    setDownloadError('');
+    setDownloadingAction(action);
+    try {
+      if (action === 'zip') {
+        await downloadParticipantCocardZip(journey);
+      } else {
+        await downloadSingleCocardSide(journey, action);
+      }
+    } catch (err) {
+      setDownloadError(
+        err instanceof Error ? err.message : 'Gagal mengunduh file kartu.'
+      );
+    } finally {
+      setDownloadingAction(null);
+    }
+  };
 
   const FrontCardFace = (
-    <div
-      className={`w-full aspect-[54/85.6] rounded-xl border ${theme.frontBg} ${theme.frontText} ${theme.frontBorder} p-5 flex flex-col justify-between overflow-hidden relative shadow-sm`}
-    >
-      {/* Header */}
-      <div className="flex items-start justify-between gap-2 pb-2 border-b border-current/12">
-        <div className="min-w-0">
-          <p className={`text-[10px] font-mono uppercase tracking-[0.2em] ${theme.frontAccent}`}>
-            Aksi Sobat Bumi
-          </p>
-          <p className={`text-[10px] truncate mt-0.5 ${theme.frontMuted}`}>
-            My Plant Card
-          </p>
-        </div>
-        <span className={`font-mono text-[11px] tabular-nums shrink-0 ${theme.frontAccent}`}>
-          {year}
-        </span>
+    <div className="@container relative w-full aspect-[1122/1594] rounded-xl overflow-hidden shadow-md border border-zinc-200 bg-[#14532D] select-none">
+      {/* Desain asli template depan (tanpa diubah) */}
+      <img
+        src={MEDIA_ASSETS.cardFrontTemplate}
+        alt="Desain Cocard Depan Aksi Sobat Bumi 2026"
+        className="w-full h-full object-cover block"
+      />
+
+      {/* Tempel HANYA foto mandiri JPG/PNG ke dalam bingkai putih yang kosong */}
+      <div
+        style={{
+          left: '23.173%',
+          top: '35.571%',
+          width: '53.565%',
+          height: '44.479%',
+          borderRadius: '10% / 8.5%',
+        }}
+        className="absolute overflow-hidden bg-[#F6F8F6] flex items-center justify-center"
+      >
+        {standalonePhoto ? (
+          <ResilientImage
+            src={standalonePhoto}
+            alt={`${journey.participant.fullName} — Foto Mandiri`}
+            fallbackTitle={journey.participant.fullName}
+            className="w-full h-full object-cover object-[center_25%] bg-white"
+          />
+        ) : (
+          <div className="flex flex-col items-center justify-center text-center px-3 text-[#4E6156] gap-1.5">
+            <Camera className="w-6 h-6 opacity-50" />
+            <span className="text-[2.8cqw] font-medium leading-tight">
+              Foto Mandiri (JPG / PNG)
+            </span>
+          </div>
+        )}
       </div>
 
-      {/* Portrait Visual */}
-      <div className="my-3 flex-1 min-h-0 rounded-lg overflow-hidden border border-current/15 bg-[#284B34]/20">
-        <ResilientImage
-          src={frontVisual}
-          alt={frontVisualAlt}
-          fallbackTitle={journey.plant.plantName}
-          className="w-full h-full object-cover"
-        />
-      </div>
-
-      {/* Plant & Participant Info */}
-      <div className="space-y-2">
-        <div>
-          <h3 className="font-editorial text-2xl font-semibold leading-tight truncate">
-            {journey.plant.plantName}
-          </h3>
-          <p className={`text-[11px] italic truncate ${theme.frontMuted}`}>
-            {journey.plant.scientificName}
-          </p>
+      {/* Tempel Nama & Program Studi menutupi kotak placeholder pada desain asli */}
+      <div
+        style={{
+          left: '16.488%',
+          top: '70.514%',
+          width: '44.742%',
+          height: '6.524%',
+        }}
+        className="absolute flex flex-col border-[1.5px] sm:border-[2px] border-white shadow-sm overflow-hidden"
+      >
+        <div className="h-[57.7%] w-full bg-gradient-to-b from-[#447E46] to-[#3A7435] border-b-[1.5px] border-white flex items-center justify-center px-1.5">
+          <span className="text-white font-bold uppercase tracking-wide truncate text-center leading-none text-[3.8cqw]">
+            {displayName}
+          </span>
         </div>
-
-        <div className="pt-2 border-t border-current/15 flex items-baseline justify-between gap-2 text-[11px]">
-          <span className="truncate font-medium">{journey.participant.fullName}</span>
-          <span className={`font-mono tracking-wider tabular-nums font-semibold shrink-0 ${theme.frontAccent}`}>
-            {journey.record.plantIdCode}
+        <div className="h-[42.3%] w-full bg-[#CDDAA7] flex items-center justify-center px-1.5">
+          <span className="text-[#1F3A1E] font-semibold uppercase tracking-wider truncate text-center leading-none text-[2.55cqw]">
+            {displayProdi}
           </span>
         </div>
       </div>
@@ -143,108 +150,102 @@ export function PlantCard({
   );
 
   const BackCardFace = (
-    <div
-      className={`w-full aspect-[54/85.6] rounded-xl border ${theme.backBg} ${theme.backText} ${theme.backBorder} p-5 flex flex-col justify-between items-center text-center overflow-hidden shadow-sm`}
-    >
-      <div className="w-full pb-2 border-b border-current/12 space-y-0.5">
-        <p className={`text-[10px] font-mono uppercase tracking-[0.2em] ${theme.backMuted}`}>
-          Aksi Sobat Bumi
-        </p>
-        <p className="font-editorial text-xl font-semibold truncate">
-          {journey.plant.plantName}
+    <div className="@container relative w-full aspect-[1122/1594] rounded-xl overflow-hidden shadow-md border border-zinc-200 bg-[#14532D] select-none">
+      {/* Desain asli template belakang (tanpa diubah) */}
+      <img
+        src={MEDIA_ASSETS.cardBackTemplate}
+        alt="Desain Cocard Belakang Aksi Sobat Bumi 2026"
+        className="w-full h-full object-cover block"
+      />
+
+      {/* QR Code + ID Pohon diperbesar memenuhi kotak putih tengah */}
+      <div
+        style={{
+          left: '12.923%',
+          top: '32.12%',
+          width: '74.153%',
+          height: '39.209%',
+        }}
+        className="absolute flex flex-col items-center justify-center px-2 py-[1.6%] text-center"
+      >
+        {qrDataUrl ? (
+          <img
+            src={qrDataUrl}
+            alt={`QR Code ${journey.record.plantIdCode}`}
+            className="h-[86%] aspect-square object-contain"
+          />
+        ) : (
+          <div className="h-[86%] aspect-square bg-zinc-100 animate-pulse rounded" />
+        )}
+        <p className="font-mono font-extrabold text-[#14532D] leading-none mt-[1.8%] text-[5.2cqw] tracking-wide tabular-nums">
+          {journey.record.plantIdCode}
         </p>
       </div>
-
-      <div className="my-auto py-2 flex flex-col items-center gap-2.5">
-        <QRDisplay
-          plantIdCode={journey.record.plantIdCode}
-          size={132}
-          darkColor="#14271B"
-          lightColor="#FFFFFF"
-        />
-        <p className={`text-[10px] font-mono uppercase tracking-[0.16em] ${theme.backMuted}`}>
-          Scan to discover my plant
-        </p>
-      </div>
-
-      <dl className="w-full space-y-1.5 text-[11px] pt-3 border-t border-current/15 text-left">
-        <div className="flex items-baseline justify-between gap-2">
-          <dt className={theme.backMuted}>Plant ID</dt>
-          <dd className="font-mono font-semibold tabular-nums">
-            {journey.record.plantIdCode}
-          </dd>
-        </div>
-        <div className="flex items-baseline justify-between gap-2">
-          <dt className={theme.backMuted}>Penanam</dt>
-          <dd className="truncate font-medium">{journey.participant.fullName}</dd>
-        </div>
-        <div className="flex items-baseline justify-between gap-2">
-          <dt className={theme.backMuted}>Tanggal</dt>
-          <dd className="tabular-nums truncate">{journey.record.plantingDate}</dd>
-        </div>
-      </dl>
     </div>
   );
 
   return (
     <div className="space-y-5">
-      {/* Controls bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 no-print">
+      {/* Bar Kontrol & Unduh Kartu */}
+      <div className="flex flex-wrap items-center justify-between gap-2.5 no-print">
         <div className="flex flex-wrap items-center gap-2">
-          {allowTemplateSwitch && (
-            <div
-              role="group"
-              aria-label="Pilih template kartu"
-              className="inline-flex items-center gap-1 p-1 rounded-lg bg-[#F4F0E4] border border-[#14271B]/10"
-            >
-              {(['forest', 'botanical', 'earth'] as CardTemplateId[]).map((id) => (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => setSelectedTemplate(id)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors capitalize whitespace-nowrap shrink-0 ${
-                    selectedTemplate === id
-                      ? 'bg-[#14271B] text-[#FAF9F4]'
-                      : 'text-[#14271B]/70 hover:text-[#14271B]'
-                  }`}
-                >
-                  {id === 'forest'
-                    ? 'Forest'
-                    : id === 'botanical'
-                    ? 'Botanical'
-                    : 'Earth'}
-                </button>
-              ))}
-            </div>
-          )}
+          <button
+            type="button"
+            disabled={downloadingAction !== null}
+            onClick={() => void handleDownload('front')}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#14532D] text-white hover:bg-[#166534] disabled:opacity-60 transition-colors whitespace-nowrap shrink-0"
+          >
+            {downloadingAction === 'front' ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <Download className="w-3.5 h-3.5" />
+            )}
+            Unduh Depan (PNG)
+          </button>
 
-          {journey.record.cardFrontPhoto && (
-            <button
-              type="button"
-              onClick={() => setUseRegistrationPhoto((v) => !v)}
-              className="px-3 py-1.5 text-xs font-medium rounded-md border border-[#14271B]/15 bg-[#FAF9F4] text-[#14271B] hover:bg-[#F4F0E4] transition-colors whitespace-nowrap shrink-0"
-            >
-              {useRegistrationPhoto
-                ? 'Tampilkan Foto Pohon di Kartu'
-                : 'Tampilkan Foto Peserta (Form)'}
-            </button>
-          )}
+          <button
+            type="button"
+            disabled={downloadingAction !== null}
+            onClick={() => void handleDownload('back')}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-[#14532D] text-[#14532D] bg-white hover:bg-[#F6F8F6] disabled:opacity-60 transition-colors whitespace-nowrap shrink-0"
+          >
+            {downloadingAction === 'back' ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <Download className="w-3.5 h-3.5" />
+            )}
+            Unduh Belakang QR (PNG)
+          </button>
+
+          <button
+            type="button"
+            disabled={downloadingAction !== null}
+            onClick={() => void handleDownload('zip')}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#A3E635] text-[#0F1F17] hover:bg-[#bef264] disabled:opacity-60 transition-colors whitespace-nowrap shrink-0"
+          >
+            {downloadingAction === 'zip' ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <FileArchive className="w-3.5 h-3.5" />
+            )}
+            Unduh Lengkap (.ZIP)
+          </button>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={() => setViewMode((m) => (m === 'flip' ? 'both' : 'flip'))}
-            className="px-3 py-1.5 text-xs font-medium rounded-md border border-[#14271B]/15 bg-[#FAF9F4] text-[#14271B] hover:bg-[#F4F0E4] transition-colors whitespace-nowrap shrink-0"
+            className="px-3 py-1.5 text-xs font-medium rounded-lg border border-zinc-200 bg-white text-[#0F1F17] hover:bg-zinc-50 transition-colors whitespace-nowrap shrink-0"
           >
-            {viewMode === 'flip' ? 'Tampilkan Depan & Belakang' : 'Mode Flip Kartu'}
+            {viewMode === 'flip' ? 'Tampilkan Depan & Belakang' : 'Mode Balik Kartu'}
           </button>
 
           {viewMode === 'flip' && (
             <button
               type="button"
               onClick={() => setIsFlipped((f) => !f)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-[#284B34] text-[#FAF9F4] hover:bg-[#14271B] transition-colors whitespace-nowrap shrink-0"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-[#0F1F17] text-white hover:bg-[#14532D] transition-colors whitespace-nowrap shrink-0"
             >
               <RotateCw className="w-3.5 h-3.5" />
               {isFlipped ? 'Lihat Sisi Depan' : 'Balik Kartu (QR)'}
@@ -255,37 +256,43 @@ export function PlantCard({
             <button
               type="button"
               onClick={() => window.print()}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-md bg-[#B4D36C] text-[#14271B] hover:bg-[#c3df82] transition-colors whitespace-nowrap shrink-0"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-zinc-200 bg-white text-[#0F1F17] hover:bg-zinc-50 transition-colors whitespace-nowrap shrink-0"
             >
               <Printer className="w-3.5 h-3.5" />
-              Cetak Portrait (54 × 85.6 mm)
+              Cetak (9.5 × 13.5 cm)
             </button>
           )}
         </div>
       </div>
 
-      {/* Card Canvas */}
+      {downloadError && (
+        <p role="alert" className="text-xs font-medium text-red-700 no-print">
+          {downloadError}
+        </p>
+      )}
+
+      {/* Tampilan Kartu Cocard */}
       {viewMode === 'both' ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-[680px] mx-auto print-only-card">
-          <div className="space-y-2 max-w-[300px] w-full mx-auto">
-            <p className="text-xs font-mono text-[#14271B]/60 uppercase tracking-widest text-center">
-              Sisi Depan · 54 × 85.6 mm
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-[700px] mx-auto print-only-card">
+          <div className="space-y-2 max-w-[320px] w-full mx-auto">
+            <p className="text-xs font-medium text-[#4E6156] text-center">
+              Sisi Depan · 9.5 × 13.5 cm
             </p>
             {FrontCardFace}
           </div>
-          <div className="space-y-2 max-w-[300px] w-full mx-auto">
-            <p className="text-xs font-mono text-[#14271B]/60 uppercase tracking-widest text-center">
+          <div className="space-y-2 max-w-[320px] w-full mx-auto">
+            <p className="text-xs font-medium text-[#4E6156] text-center">
               Sisi Belakang · QR Code
             </p>
             {BackCardFace}
           </div>
         </div>
       ) : (
-        <div className="max-w-[300px] mx-auto perspective-1000">
+        <div className="max-w-[320px] mx-auto perspective-1000">
           <div
             role="button"
             tabIndex={0}
-            aria-label="Klik untuk membalik kartu tanaman"
+            aria-label="Klik untuk membalik kartu cocard"
             onClick={() => setIsFlipped((f) => !f)}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
@@ -293,7 +300,7 @@ export function PlantCard({
                 setIsFlipped((f) => !f);
               }
             }}
-            className={`relative w-full aspect-[54/85.6] transition-transform duration-500 transform-style-3d cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#284B34] rounded-xl ${
+            className={`relative w-full aspect-[1122/1594] transition-transform duration-500 transform-style-3d cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#166534] rounded-xl ${
               isFlipped ? 'rotate-y-180' : ''
             }`}
           >
@@ -302,8 +309,8 @@ export function PlantCard({
               {BackCardFace}
             </div>
           </div>
-          <p className="text-center text-xs text-[#14271B]/60 mt-3 no-print">
-            Klik kartu portrait untuk membalik antara sisi depan dan QR Code belakang.
+          <p className="text-center text-xs text-[#4E6156] mt-3 no-print">
+            Klik kartu Cocard untuk membalik antara sisi depan dan QR Code belakang.
           </p>
         </div>
       )}

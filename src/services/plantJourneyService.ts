@@ -21,9 +21,11 @@ import type {
 } from '../types/plantJourney';
 
 export const DEFAULT_PERSONAL_MESSAGE =
-  'One small action can grow into something meaningful.';
+  'Satu aksi kecil dapat tumbuh menjadi sesuatu yang berarti.';
 
 const STORAGE_KEY = 'asb_plant_journey_store_v4';
+const ADMIN_CRED_KEY = 'asb_admin_credentials_v1';
+const ADMIN_SESSION_KEY = 'asb_admin_session_active';
 
 interface StoreState {
   plants: PlantSpecies[];
@@ -89,6 +91,89 @@ export function resetToSeedData(): void {
     growthUpdates: [...SEED_GROWTH_UPDATES],
   });
 }
+
+/* ============================
+   ADMIN AUTHENTICATION (LOCAL HASHED BEFORE FIREBASE AUTH)
+   ============================ */
+
+async function sha256Hex(input: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(input);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hashBuffer))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+export function hasConfiguredAdminAccount(): boolean {
+  if (typeof window === 'undefined') return false;
+  return Boolean(window.localStorage.getItem(ADMIN_CRED_KEY));
+}
+
+export function getConfiguredAdminEmail(): string {
+  if (typeof window === 'undefined') return '';
+  try {
+    const raw = window.localStorage.getItem(ADMIN_CRED_KEY);
+    if (!raw) return '';
+    const parsed = JSON.parse(raw) as { email: string; hash: string };
+    return parsed.email || '';
+  } catch {
+    return '';
+  }
+}
+
+export function isAdminAuthenticated(): boolean {
+  if (typeof window === 'undefined') return false;
+  return window.sessionStorage.getItem(ADMIN_SESSION_KEY) === 'true';
+}
+
+export async function setupAdminAccount(
+  email: string,
+  passcode: string
+): Promise<void> {
+  const cleanEmail = email.trim().toLowerCase();
+  const hash = await sha256Hex(`${cleanEmail}:${passcode}`);
+  window.localStorage.setItem(
+    ADMIN_CRED_KEY,
+    JSON.stringify({ email: cleanEmail, hash })
+  );
+  window.sessionStorage.setItem(ADMIN_SESSION_KEY, 'true');
+}
+
+export async function loginAdminAccount(
+  email: string,
+  passcode: string
+): Promise<boolean> {
+  const raw = window.localStorage.getItem(ADMIN_CRED_KEY);
+  if (!raw) return false;
+  try {
+    const parsed = JSON.parse(raw) as { email: string; hash: string };
+    const cleanEmail = email.trim().toLowerCase();
+    const candidateHash = await sha256Hex(`${cleanEmail}:${passcode}`);
+    if (cleanEmail === parsed.email && candidateHash === parsed.hash) {
+      window.sessionStorage.setItem(ADMIN_SESSION_KEY, 'true');
+      return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+export function logoutAdminAccount(): void {
+  if (typeof window === 'undefined') return;
+  window.sessionStorage.removeItem(ADMIN_SESSION_KEY);
+}
+
+export function resetAdminAccount(): void {
+  if (typeof window === 'undefined') return;
+  window.localStorage.removeItem(ADMIN_CRED_KEY);
+  window.sessionStorage.removeItem(ADMIN_SESSION_KEY);
+}
+
+/* ============================
+   QUERIES
+   ============================ */
 
 export function getCardTemplates(): CardTemplateOption[] {
   return CARD_TEMPLATES;
@@ -199,6 +284,10 @@ export function findJourneyByPlantCode(
   return enrichRecordFromStore(record.id, store);
 }
 
+/* ============================
+   PARTICIPANT & RECORD MUTATIONS
+   ============================ */
+
 export function updateRecordPhoto(
   plantIdCode: string,
   slot: 'participantPlantPhoto' | 'plantPhoto' | 'cardFrontPhoto',
@@ -223,6 +312,11 @@ export function updateRecordPhoto(
 export function updateRecordDetails(
   plantIdCode: string,
   updates: {
+    fullName?: string;
+    plantId?: string;
+    eventId?: string;
+    plantingDate?: string;
+    templateId?: CardTemplateId;
     personalMessage?: string;
     beginningDescription?: string;
     location?: string;
@@ -235,32 +329,49 @@ export function updateRecordDetails(
   if (recIdx === -1) return null;
 
   const record = store.records[recIdx];
-  if (
-    updates.beginningDescription !== undefined ||
-    updates.location !== undefined
-  ) {
-    store.records[recIdx] = {
-      ...record,
-      beginningDescription:
-        updates.beginningDescription ?? record.beginningDescription,
-      location: updates.location ?? record.location,
-    };
-  }
+  store.records[recIdx] = {
+    ...record,
+    plantId: updates.plantId ?? record.plantId,
+    plantingDate: updates.plantingDate ?? record.plantingDate,
+    templateId: updates.templateId ?? record.templateId,
+    beginningDescription:
+      updates.beginningDescription ?? record.beginningDescription,
+    location: updates.location ?? record.location,
+  };
 
-  if (updates.personalMessage !== undefined) {
-    const pIdx = store.participants.findIndex(
-      (p) => p.id === record.participantId
-    );
-    if (pIdx !== -1) {
-      store.participants[pIdx] = {
-        ...store.participants[pIdx],
-        personalMessage: updates.personalMessage,
-      };
-    }
+  const pIdx = store.participants.findIndex(
+    (p) => p.id === record.participantId
+  );
+  if (pIdx !== -1) {
+    store.participants[pIdx] = {
+      ...store.participants[pIdx],
+      fullName: updates.fullName ?? store.participants[pIdx].fullName,
+      eventId: updates.eventId ?? store.participants[pIdx].eventId,
+      personalMessage:
+        updates.personalMessage ?? store.participants[pIdx].personalMessage,
+    };
   }
 
   saveStore(store);
   return enrichRecordFromStore(record.id, store);
+}
+
+export function deleteParticipantRecord(plantIdCode: string): boolean {
+  const store = getInitialStore();
+  const record = store.records.find(
+    (r) => r.plantIdCode.toUpperCase() === plantIdCode.trim().toUpperCase()
+  );
+  if (!record) return false;
+
+  store.records = store.records.filter((r) => r.id !== record.id);
+  store.participants = store.participants.filter(
+    (p) => p.id !== record.participantId
+  );
+  store.growthUpdates = store.growthUpdates.filter(
+    (u) => u.plantRecordId !== record.id
+  );
+  saveStore(store);
+  return true;
 }
 
 export function addGrowthUpdateToRecord(
@@ -282,7 +393,7 @@ export function addGrowthUpdateToRecord(
   const newUpdate: GrowthUpdate = {
     id: `upd-${Date.now()}`,
     plantRecordId: record.id,
-    dayLabel: input.dayLabel.trim() || 'Update',
+    dayLabel: input.dayLabel.trim() || 'Pembaruan',
     updateDate: input.updateDate,
     photo: input.photo,
     title: input.title.trim(),
@@ -296,18 +407,22 @@ export function addGrowthUpdateToRecord(
   return enrichRecordFromStore(record.id, store);
 }
 
-export function getNextPlantIdCode(): string {
-  const store = getInitialStore();
+function getNextNumericPlantCounter(records: PlantRecord[]): number {
   let maxNum = 0;
-  for (const r of store.records) {
+  for (const r of records) {
     const match = r.plantIdCode.match(/SB26-(\d+)/i);
     if (match) {
       const num = parseInt(match[1], 10);
       if (num > maxNum) maxNum = num;
     }
   }
-  const next = String(maxNum + 1).padStart(4, '0');
-  return `SB26-${next}`;
+  return maxNum + 1;
+}
+
+export function getNextPlantIdCode(): string {
+  const store = getInitialStore();
+  const next = getNextNumericPlantCounter(store.records);
+  return `SB26-${String(next).padStart(4, '0')}`;
 }
 
 export function createParticipantTemplateRecord(input: {
@@ -320,7 +435,7 @@ export function createParticipantTemplateRecord(input: {
   cardFrontPhoto?: string;
 }): EnrichedPlantJourney | null {
   const store = getInitialStore();
-  const plantIdCode = getNextPlantIdCode();
+  const plantIdCode = `SB26-${String(getNextNumericPlantCounter(store.records)).padStart(4, '0')}`;
   const timestamp = Date.now();
 
   const participantId = `part-${timestamp}`;
@@ -345,7 +460,7 @@ export function createParticipantTemplateRecord(input: {
     cardFrontPhoto: input.cardFrontPhoto || '',
     plantPhoto: '',
     participantPlantPhoto: '',
-    beginningTitle: 'Everything Starts With a Seed.',
+    beginningTitle: 'Semua Berawal dari Satu Benih.',
     beginningDescription:
       'Perjalanan tanaman ini telah aktif. Dokumentasi foto Hari H dapat langsung diisi oleh peserta atau admin.',
     templateId: input.templateId,
@@ -358,6 +473,119 @@ export function createParticipantTemplateRecord(input: {
   saveStore(store);
 
   return enrichRecordFromStore(recordId, store);
+}
+
+export function batchCreateParticipantsFromText(
+  rawText: string,
+  defaults: {
+    defaultPlantId: string;
+    eventId: string;
+    plantingDate: string;
+    location: string;
+    templateId: CardTemplateId;
+  }
+): EnrichedPlantJourney[] {
+  const store = getInitialStore();
+  const lines = rawText
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter((l) => l.length > 0);
+
+  if (lines.length === 0) return [];
+
+  let counter = getNextNumericPlantCounter(store.records);
+  const createdIds: string[] = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const rawLine = lines[i];
+    // Skip obvious CSV/header lines
+    const lower = rawLine.toLowerCase();
+    if (
+      i === 0 &&
+      (lower.includes('nama lengkap') ||
+        lower === 'nama' ||
+        lower.startsWith('timestamp'))
+    ) {
+      continue;
+    }
+
+    // Split by tab, comma, or semicolon
+    const parts = rawLine
+      .split(/\t|,|;|\|/)
+      .map((p) => p.trim().replace(/^"|"$/g, ''))
+      .filter((p) => p.length > 0);
+
+    if (parts.length === 0) continue;
+
+    // Remove leading index like "1. " or "1) "
+    let nameCandidate = parts[0].replace(/^\d+[.)]\s*/, '').trim();
+    // If first column looks like a timestamp from Google Forms (contains / or : and digits), try second column
+    if (
+      parts.length > 1 &&
+      /\d{1,4}[/-]\d{1,2}[/-]\d{2,4}/.test(nameCandidate)
+    ) {
+      nameCandidate = parts[1].replace(/^\d+[.)]\s*/, '').trim();
+    }
+
+    if (!nameCandidate) continue;
+
+    // Try matching plant species from remaining columns
+    let resolvedPlantId = defaults.defaultPlantId;
+    for (const part of parts.slice(1)) {
+      const foundPlant = store.plants.find(
+        (pl) =>
+          part.toLowerCase().includes(pl.plantName.toLowerCase()) ||
+          part.toLowerCase() === pl.plantCode.toLowerCase()
+      );
+      if (foundPlant) {
+        resolvedPlantId = foundPlant.id;
+        break;
+      }
+    }
+
+    const plantIdCode = `SB26-${String(counter).padStart(4, '0')}`;
+    counter += 1;
+
+    const uid = `${Date.now()}-${i}-${Math.random().toString(36).slice(2, 6)}`;
+    const participantId = `part-${uid}`;
+    const recordId = `rec-${plantIdCode.toLowerCase()}`;
+
+    store.participants.push({
+      id: participantId,
+      participantCode: `PT-${plantIdCode.slice(-4)}`,
+      fullName: nameCandidate,
+      photo: '',
+      eventId: defaults.eventId,
+      personalMessage: '',
+      createdAt: new Date().toISOString(),
+    });
+
+    store.records.push({
+      id: recordId,
+      participantId,
+      plantId: resolvedPlantId,
+      plantIdCode,
+      plantingDate: defaults.plantingDate.trim() || '14 Desember 2026',
+      location: defaults.location.trim() || 'Lokasi Penanaman Aksi Sobat Bumi',
+      cardFrontPhoto: '',
+      plantPhoto: '',
+      participantPlantPhoto: '',
+      beginningTitle: 'Semua Berawal dari Satu Benih.',
+      beginningDescription:
+        'Halaman perjalanan tanaman dibuat otomatis untuk peserta. Foto Hari H dapat langsung diisi oleh peserta atau admin.',
+      templateId: defaults.templateId,
+      status: 'Published',
+      createdAt: new Date().toISOString(),
+    });
+
+    createdIds.push(recordId);
+  }
+
+  saveStore(store);
+
+  return createdIds
+    .map((id) => enrichRecordFromStore(id, store))
+    .filter((item): item is EnrichedPlantJourney => item !== null);
 }
 
 /* ============================
@@ -429,7 +657,7 @@ export function updateGreenActionEvent(
 
 export function deleteGreenActionEvent(eventId: string): void {
   const store = getInitialStore();
-  if (store.events.length <= 1) return; // keep at least 1 event
+  if (store.events.length <= 1) return;
   store.events = store.events.filter((e) => e.id !== eventId);
   saveStore(store);
 }
@@ -498,7 +726,7 @@ export function compressImageFile(file: File): Promise<string> {
     reader.onload = () => {
       const img = new Image();
       img.onload = () => {
-        const maxDim = 1080;
+        const maxDim = 760;
         let { width, height } = img;
         if (width > maxDim || height > maxDim) {
           if (width > height) {
@@ -517,8 +745,17 @@ export function compressImageFile(file: File): Promise<string> {
           resolve(reader.result as string);
           return;
         }
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, width, height);
         ctx.drawImage(img, 0, 0, width, height);
-        resolve(canvas.toDataURL('image/jpeg', 0.82));
+
+        let quality = 0.78;
+        let result = canvas.toDataURL('image/jpeg', quality);
+        while (result.length > 180000 && quality > 0.35) {
+          quality -= 0.12;
+          result = canvas.toDataURL('image/jpeg', quality);
+        }
+        resolve(result);
       };
       img.onerror = () => reject(new Error('Gagal membaca file gambar.'));
       img.src = reader.result as string;

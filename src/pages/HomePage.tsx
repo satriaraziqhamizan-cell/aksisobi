@@ -1,327 +1,345 @@
 import { Link } from 'react-router-dom';
-import { ArrowDown, ArrowRight, ArrowUpRight } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, QrCode } from 'lucide-react';
 import { MEDIA_ASSETS, VOLUNTEER_FORM_URL } from '../data/seedData';
-import {
-  getAllEvents,
-  getAllPublishedJourneys,
-  getMovementStats,
-} from '../services/plantJourneyService';
+import { usePlantData } from '../context/PlantDataContext';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { ResilientImage } from '../components/ResilientImage';
 
 export function HomePage() {
-  const events = getAllEvents();
-  const journeys = getAllPublishedJourneys();
-  const stats = getMovementStats();
+  const { events, journeys, movementStats: stats } = usePlantData();
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF9F4] text-[#14271B]">
-      <Navbar variant="transparent" />
+    <div className="min-h-screen flex flex-col bg-white text-[#0F1F17]">
+      <Navbar variant="solid" />
 
-      {/* SECTION A — HERO */}
-      <section className="relative min-h-[92vh] flex items-end pt-24 pb-16 sm:pb-24 overflow-hidden bg-[#14271B] text-[#FAF9F4]">
-        <ResilientImage
-          src={MEDIA_ASSETS.heroForest}
-          alt="Relawan Aksi Sobat Bumi menanam bibit pohon di hutan tropis pada pagi hari"
-          fallbackTitle="Aksi Sobat Bumi"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-[#14271B] via-[#14271B]/65 to-[#14271B]/50"
-        />
+      <main className="flex-1">
+        {/* HERO — Clean Modern Split */}
+        <section className="bg-white pt-10 pb-16 sm:pt-16 sm:pb-24 border-b border-zinc-200/80">
+          <div className="max-w-[1200px] mx-auto px-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-stretch">
+              <div className="lg:col-span-7 flex flex-col justify-between space-y-10 py-2">
+                <div className="space-y-6">
+                  <p className="text-sm font-medium text-[#166534]">
+                    Sobat Bumi Indonesia · Universitas Jambi
+                  </p>
+                  <h1 className="text-4xl sm:text-5xl lg:text-[3.75rem] font-semibold leading-[1.08] tracking-tight text-[#0F1F17]">
+                    Satu Pohon, Satu Cerita untuk Masa Depan Lebih Hijau.
+                  </h1>
+                  <p className="text-base sm:text-lg text-[#4E6156] max-w-xl leading-relaxed">
+                    Setiap bibit yang Anda tanam tercatat dengan identitas
+                    digital dan QR Code pribadi. Pindai kartu Anda untuk
+                    mendokumentasikan hari penanaman hingga pertumbuhan pohon
+                    dari waktu ke waktu.
+                  </p>
 
-        <div className="relative z-10 w-full max-w-[1200px] mx-auto px-6">
-          <div className="max-w-3xl space-y-6">
-            <p className="text-xs font-mono uppercase tracking-[0.24em] text-[#B4D36C]">
-              Aksi Sobat Bumi · My Plant Journey
-            </p>
-            <h1 className="font-editorial text-4xl sm:text-6xl lg:text-[4.25rem] font-medium leading-[1.08] tracking-tight text-[#FAF9F4]">
-              Small Actions, Greener Future.
-            </h1>
-            <p className="text-base sm:text-lg text-[#FAF9F4]/85 max-w-xl leading-relaxed">
-              Bersama bergerak, bertumbuh, dan menciptakan aksi nyata untuk bumi
-              yang lebih baik. Setiap pohon yang ditanam membawa satu kisah yang
-              terus hidup.
-            </p>
+                  <div className="flex flex-wrap items-center gap-3.5 pt-2">
+                    <Link
+                      to="/my-plant"
+                      className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-semibold rounded-lg bg-[#14532D] text-white hover:bg-[#166534] transition-colors whitespace-nowrap shrink-0"
+                    >
+                      <QrCode className="w-4 h-4" />
+                      Pindai QR / Cari Pohonku
+                    </Link>
+                    <a
+                      href={VOLUNTEER_FORM_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-5 py-3.5 text-sm font-medium rounded-lg border border-zinc-200 text-[#0F1F17] bg-white hover:bg-zinc-50 transition-colors whitespace-nowrap shrink-0"
+                    >
+                      Daftar Relawan
+                      <ArrowUpRight className="w-4 h-4 text-[#4E6156]" />
+                    </a>
+                  </div>
+                </div>
 
-            <div className="flex flex-wrap items-center gap-4 pt-2">
-              <Link
-                to="/my-plant"
-                className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-semibold rounded-md bg-[#B4D36C] text-[#14271B] hover:bg-[#c3df82] transition-colors whitespace-nowrap shrink-0"
-              >
-                My Plant Journey
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <a
-                href="#movement"
-                className="inline-flex items-center gap-2 px-5 py-3.5 text-sm font-medium rounded-md border border-[#FAF9F4]/30 text-[#FAF9F4] hover:bg-[#FAF9F4]/10 transition-colors whitespace-nowrap shrink-0"
-              >
-                Join Our Movement
-              </a>
+                {/* Inline Proof Strip */}
+                <dl className="grid grid-cols-3 gap-6 pt-8 border-t border-zinc-200">
+                  <div>
+                    <dt className="text-xs text-[#4E6156] mb-1">Pohon Ditanam</dt>
+                    <dd className="text-2xl sm:text-3xl font-semibold text-[#0F1F17] tabular-nums">
+                      {stats.totalTreesPlanted}+
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-[#4E6156] mb-1">Jenis Pohon</dt>
+                    <dd className="text-2xl sm:text-3xl font-semibold text-[#0F1F17] tabular-nums">
+                      {stats.totalSpecies}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-[#4E6156] mb-1">Relawan</dt>
+                    <dd className="text-2xl sm:text-3xl font-semibold text-[#0F1F17] tabular-nums">
+                      {stats.totalVolunteers}+
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+
+              <div className="lg:col-span-5 flex flex-col">
+                <div className="relative flex-1 min-h-[360px] lg:min-h-[480px] rounded-2xl overflow-hidden border border-zinc-200 bg-zinc-100">
+                  <ResilientImage
+                    src={MEDIA_ASSETS.heroForest}
+                    alt="Relawan Aksi Sobat Bumi menanam bibit pohon di kawasan hijau"
+                    fallbackTitle="Aksi Sobat Bumi"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent p-6 text-white">
+                    <p className="text-xs font-medium text-white/80">
+                      Dokumentasi Lapangan
+                    </p>
+                    <p className="text-sm font-medium mt-0.5">
+                      Penanaman &amp; pelacakan pertumbuhan berbasis QR Code
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+        </section>
 
-          <div className="mt-14 pt-6 border-t border-[#FAF9F4]/15 flex items-center justify-between text-xs text-[#FAF9F4]/70">
-            <span>One Plant · One Story · One Greener Future</span>
-            <a
-              href="#movement"
-              className="inline-flex items-center gap-1.5 hover:text-[#B4D36C] transition-colors"
-            >
-              <span>Jelajahi Gerakan</span>
-              <ArrowDown className="w-3.5 h-3.5" />
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION B — ABOUT OUR MOVEMENT */}
-      <section id="movement" className="bg-[#F4F0E4] py-20 sm:py-28">
-        <div className="max-w-[1200px] mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-stretch">
-            <div className="lg:col-span-6 flex flex-col justify-between space-y-10">
-              <div className="space-y-5">
-                <p className="text-xs font-mono uppercase tracking-[0.2em] text-[#647C45]">
-                  01 · About Our Movement
+        {/* ABOUT MOVEMENT */}
+        <section id="movement" className="bg-[#F6F8F6] py-20 sm:py-28">
+          <div className="max-w-[1200px] mx-auto px-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-stretch">
+              <div className="lg:col-span-6 flex flex-col order-2 lg:order-1">
+                <div className="flex-1 min-h-[340px] rounded-2xl overflow-hidden border border-zinc-200 bg-white">
+                  <ResilientImage
+                    src={MEDIA_ASSETS.aboutCommunity}
+                    alt="Para relawan Aksi Sobat Bumi merawat bibit pohon muda bersama"
+                    fallbackTitle="Kegiatan Relawan Aksi Sobat Bumi"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <p className="text-xs text-[#4E6156] mt-3">
+                  Kolaborasi relawan dalam penanaman dan pemantauan bibit pohon
+                  berkelanjutan.
                 </p>
-                <h2 className="font-editorial text-3xl sm:text-5xl font-medium leading-tight text-[#14271B]">
-                  We Believe Every Action Matters.
+              </div>
+
+              <div className="lg:col-span-6 flex flex-col justify-between space-y-8 order-1 lg:order-2">
+                <div className="space-y-5">
+                  <img
+                    src={MEDIA_ASSETS.brandLogo}
+                    alt="Logo Sobat Bumi Indonesia Universitas Jambi"
+                    className="h-16 w-auto object-contain"
+                  />
+                  <h2 className="text-3xl sm:text-4xl font-semibold leading-tight text-[#0F1F17]">
+                    Setiap Aksi Nyata Membawa Perubahan Berkelanjutan.
+                  </h2>
+                  <p className="text-base text-[#4E6156] leading-relaxed max-w-xl">
+                    Aksi Sobat Bumi mengajak mahasiswa, relawan, dan masyarakat
+                    untuk menjaga kelestarian lingkungan melalui penanaman pohon
+                    yang terukur. Setiap pohon terhubung ke halaman digital unik
+                    sehingga riwayat pertumbuhannya tetap terjaga.
+                  </p>
+                </div>
+
+                <div className="divide-y divide-zinc-200 border-y border-zinc-200 text-sm">
+                  <div className="py-4 flex items-baseline justify-between gap-4">
+                    <span className="font-medium text-[#0F1F17]">
+                      Identitas Digital Unik
+                    </span>
+                    <span className="text-[#4E6156] text-right">
+                      1 kartu portrait · 1 halaman perjalanan pohon
+                    </span>
+                  </div>
+                  <div className="py-4 flex items-baseline justify-between gap-4">
+                    <span className="font-medium text-[#0F1F17]">
+                      Dokumentasi Hari Penanaman
+                    </span>
+                    <span className="text-[#4E6156] text-right">
+                      Foto dapat diunggah langsung saat aksi berlangsung
+                    </span>
+                  </div>
+                  <div className="py-4 flex items-baseline justify-between gap-4">
+                    <span className="font-medium text-[#0F1F17]">
+                      Jenis Tanaman Unggulan
+                    </span>
+                    <span className="text-[#4E6156] text-right">
+                      {stats.speciesNamesSummary}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ACTIVITIES / AKSI HIJAU */}
+        <section className="bg-white py-20 sm:py-28 border-t border-zinc-200/80">
+          <div className="max-w-[1200px] mx-auto px-6 space-y-12">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+              <div className="space-y-2 max-w-xl">
+                <p className="text-sm font-medium text-[#166534]">
+                  Kegiatan &amp; Aksi Hijau
+                </p>
+                <h2 className="text-3xl sm:text-4xl font-semibold text-[#0F1F17]">
+                  Aksi Penanaman di Lapangan
                 </h2>
-                <p className="text-base text-[#14271B]/80 leading-relaxed max-w-xl">
-                  Aksi Sobat Bumi mengajak individu dan komunitas mengambil peran
-                  nyata dalam menjaga lingkungan melalui kegiatan penanaman pohon
-                  yang berkelanjutan. Setiap bibit yang ditanam menjadi bagian
-                  dari upaya bersama memulihkan ruang hijau dan kesadaran ekologis.
-                </p>
               </div>
-
-              <dl className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-8 border-t border-[#14271B]/15">
-                <div>
-                  <dt className="text-xs text-[#14271B]/60 mb-1">
-                    Pohon Ditanam
-                  </dt>
-                  <dd className="font-editorial text-3xl font-semibold text-[#14271B] tabular-nums">
-                    {stats.totalTreesPlanted}+ Pohon
-                  </dd>
-                  <p className="text-xs text-[#647C45] mt-1">
-                    Tercatat dalam aksi lapangan
-                  </p>
-                </div>
-                <div>
-                  <dt className="text-xs text-[#14271B]/60 mb-1">
-                    Jenis Pohon
-                  </dt>
-                  <dd className="font-editorial text-3xl font-semibold text-[#14271B] tabular-nums">
-                    {stats.totalSpecies} Jenis
-                  </dd>
-                  <p className="text-xs text-[#647C45] mt-1">
-                    {stats.speciesNamesSummary}
-                  </p>
-                </div>
-                <div>
-                  <dt className="text-xs text-[#14271B]/60 mb-1">
-                    Relawan Bergerak
-                  </dt>
-                  <dd className="font-editorial text-3xl font-semibold text-[#14271B] tabular-nums">
-                    {stats.totalVolunteers}+ Orang
-                  </dd>
-                  <p className="text-xs text-[#647C45] mt-1">
-                    Lintas komunitas &amp; kota
-                  </p>
-                </div>
-              </dl>
-            </div>
-
-            <div className="lg:col-span-6 flex flex-col">
-              <div className="flex-1 min-h-[340px] rounded-xl overflow-hidden border border-[#14271B]/10">
-                <ResilientImage
-                  src={MEDIA_ASSETS.aboutCommunity}
-                  alt="Para relawan Aksi Sobat Bumi merawat bibit pohon muda di lereng perbukitan hijau"
-                  fallbackTitle="Kegiatan Relawan Aksi Sobat Bumi"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="text-xs font-serif italic text-[#14271B]/65 mt-3">
-                Fig. 1 — Dokumentasi lapangan penanaman dan perawatan bibit pohon
-                oleh relawan Aksi Sobat Bumi.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION C — OUR ACTIVITIES (GREEN ACTION) */}
-      <section className="bg-[#FAF9F4] py-20 sm:py-28 border-t border-[#14271B]/10">
-        <div className="max-w-[1200px] mx-auto px-6 space-y-12">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
-            <div className="space-y-3 max-w-xl">
-              <p className="text-xs font-mono uppercase tracking-[0.2em] text-[#647C45]">
-                02 · Green Action &amp; Activities
-              </p>
-              <h2 className="font-editorial text-3xl sm:text-4xl font-medium text-[#14271B]">
-                Green Action di Lapangan
-              </h2>
-            </div>
-            <Link
-              to="/events"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#284B34] hover:text-[#14271B] underline underline-offset-4 whitespace-nowrap shrink-0"
-            >
-              Lihat Semua Kegiatan
-              <ArrowUpRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {events.map((evt) => (
-              <article
-                key={evt.id}
-                className="border border-[#14271B]/12 bg-white rounded-xl overflow-hidden flex flex-col justify-between"
+              <Link
+                to="/events"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#166534] hover:text-[#0F1F17] transition-colors whitespace-nowrap shrink-0"
               >
-                <div>
-                  <div className="aspect-[16/9] w-full overflow-hidden bg-[#F4F0E4]">
-                    <ResilientImage
-                      src={evt.coverImage}
-                      alt={evt.eventName}
-                      fallbackTitle={evt.eventName}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-6 sm:p-8 space-y-3">
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-[#647C45] font-medium">
-                      <span>{evt.status}</span>
-                      <span aria-hidden="true">·</span>
-                      <span className="tabular-nums">{evt.eventDate}</span>
-                      <span aria-hidden="true">·</span>
-                      <span>{evt.eventLocation}</span>
-                    </div>
-                    <h3 className="font-editorial text-2xl font-medium text-[#14271B]">
-                      {evt.eventName}
-                    </h3>
-                    <p className="text-sm sm:text-base text-[#14271B]/75 leading-relaxed">
-                      {evt.description}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="px-6 sm:px-8 pb-6 sm:pb-8 pt-2 flex items-center justify-between border-t border-[#14271B]/8">
-                  <span className="text-xs font-mono text-[#14271B]/60 tabular-nums">
-                    Target {evt.treesPlantedTarget} pohon · {evt.volunteerCount} relawan
-                  </span>
-                  <Link
-                    to={`/events/${evt.slug}`}
-                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#284B34] hover:text-[#14271B] whitespace-nowrap shrink-0"
-                  >
-                    Explore Event
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION D — OPEN RECRUITMENT VOLUNTEER (DIRECT GOOGLE FORM) */}
-      <section id="volunteer" className="bg-[#284B34] text-[#FAF9F4] py-20 sm:py-24">
-        <div className="max-w-[1200px] mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-            <div className="lg:col-span-8 space-y-4">
-              <p className="text-xs font-mono uppercase tracking-[0.2em] text-[#B4D36C]">
-                03 · Open Recruitment Volunteer
-              </p>
-              <h2 className="font-editorial text-3xl sm:text-5xl font-medium leading-tight">
-                Be Part of the Change.
-              </h2>
-              <p className="text-base text-[#FAF9F4]/85 leading-relaxed max-w-2xl">
-                Small actions become meaningful when we grow and move together.
-                Daftar melalui formulir resmi untuk bergabung sebagai relawan
-                Aksi Sobat Bumi pada kegiatan penanaman berikutnya.
-              </p>
-            </div>
-            <div className="lg:col-span-4 flex lg:justify-end">
-              <a
-                href={VOLUNTEER_FORM_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 text-sm font-semibold rounded-md bg-[#B4D36C] text-[#14271B] hover:bg-[#c3df82] transition-colors whitespace-nowrap shrink-0"
-              >
-                Join as Volunteer
+                Lihat Semua Kegiatan
                 <ArrowUpRight className="w-4 h-4" />
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION E — MY PLANT JOURNEY SPOTLIGHT */}
-      <section className="bg-[#14271B] text-[#FAF9F4] py-20 sm:py-28 border-t border-[#FAF9F4]/10">
-        <div className="max-w-[1200px] mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-6 space-y-6">
-              <p className="text-xs font-mono uppercase tracking-[0.2em] text-[#B4D36C]">
-                04 · My Plant Journey
-              </p>
-              <h2 className="font-editorial text-3xl sm:text-5xl font-medium leading-tight">
-                Every Plant Has a Story.
-              </h2>
-              <p className="text-base text-[#FAF9F4]/80 leading-relaxed max-w-xl">
-                A living reminder of your contribution to a greener future.
-                Masukkan Plant ID Anda untuk melihat halaman perjalanan tanaman,
-                mengunggah foto Hari H saat menanam, memantau pertumbuhan pohon,
-                serta mengunduh kartu QR personal Anda.
-              </p>
-
-              <div className="flex flex-wrap items-center gap-4 pt-2">
-                <Link
-                  to="/my-plant"
-                  className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-semibold rounded-md bg-[#B4D36C] text-[#14271B] hover:bg-[#c3df82] transition-colors whitespace-nowrap shrink-0"
-                >
-                  Discover Your Plant
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-                <Link
-                  to="/plants"
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-[#FAF9F4] hover:text-[#B4D36C] underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
-                >
-                  Lihat Katalog Jenis Pohon
-                  <ArrowUpRight className="w-4 h-4" />
-                </Link>
-              </div>
+              </Link>
             </div>
 
-            <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-5">
-              {journeys.slice(0, 2).map((item) => (
-                <Link
-                  key={item.record.id}
-                  to={`/plant/${item.record.plantIdCode}`}
-                  className="group rounded-xl overflow-hidden border border-[#FAF9F4]/15 bg-[#1b3424] hover:border-[#B4D36C]/50 transition-colors flex flex-col"
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {events.map((evt) => (
+                <article
+                  key={evt.id}
+                  className="border border-zinc-200 bg-white rounded-2xl overflow-hidden flex flex-col justify-between hover:border-zinc-300 transition-colors"
                 >
-                  <div className="aspect-[3/4] w-full overflow-hidden bg-[#284B34]/40">
-                    <ResilientImage
-                      src={item.plant.mainImage}
-                      alt={item.plant.plantName}
-                      fallbackTitle={item.plant.plantName}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
+                  <div>
+                    <div className="aspect-[16/9] w-full overflow-hidden bg-zinc-100">
+                      <ResilientImage
+                        src={evt.coverImage}
+                        alt={evt.eventName}
+                        fallbackTitle={evt.eventName}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="p-6 sm:p-8 space-y-3">
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-[#4E6156] font-medium">
+                        <span className="text-[#166534]">
+                          {evt.status === 'Completed' ? 'Selesai' : 'Akan Datang'}
+                        </span>
+                        <span aria-hidden="true">·</span>
+                        <span className="tabular-nums">{evt.eventDate}</span>
+                        <span aria-hidden="true">·</span>
+                        <span>{evt.eventLocation}</span>
+                      </div>
+                      <h3 className="text-2xl font-semibold text-[#0F1F17]">
+                        {evt.eventName}
+                      </h3>
+                      <p className="text-sm sm:text-base text-[#4E6156] leading-relaxed">
+                        {evt.description}
+                      </p>
+                    </div>
                   </div>
-                  <div className="p-5 space-y-1">
-                    <p className="font-mono text-xs text-[#B4D36C] tabular-nums">
-                      {item.record.plantIdCode}
-                    </p>
-                    <h3 className="font-editorial text-2xl font-medium text-[#FAF9F4]">
-                      {item.plant.plantName}
-                    </h3>
-                    <p className="text-xs text-[#FAF9F4]/70 truncate">
-                      {item.participant.fullName}
-                    </p>
+
+                  <div className="px-6 sm:px-8 pb-6 sm:pb-7 pt-4 flex items-center justify-between border-t border-zinc-100">
+                    <span className="text-xs font-mono text-[#4E6156] tabular-nums">
+                      Target {evt.treesPlantedTarget} pohon · {evt.volunteerCount}{' '}
+                      relawan
+                    </span>
+                    <Link
+                      to={`/events/${evt.slug}`}
+                      className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#166534] hover:text-[#0F1F17] whitespace-nowrap shrink-0"
+                    >
+                      Lihat Detail
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
                   </div>
-                </Link>
+                </article>
               ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        {/* VOLUNTEER CTA BANNER */}
+        <section id="volunteer" className="bg-[#0F2419] text-white py-20 sm:py-24">
+          <div className="max-w-[1200px] mx-auto px-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+              <div className="lg:col-span-8 space-y-4">
+                <p className="text-sm font-medium text-[#A3E635]">
+                  Pendaftaran Relawan Terbuka
+                </p>
+                <h2 className="text-3xl sm:text-4xl font-semibold leading-tight">
+                  Jadilah Bagian dari Perubahan Hijau.
+                </h2>
+                <p className="text-base text-white/80 leading-relaxed max-w-2xl">
+                  Aksi kecil menjadi bermakna ketika dilakukan bersama. Isi
+                  formulir pendaftaran resmi untuk bergabung sebagai relawan
+                  Aksi Sobat Bumi dan dapatkan kartu pohon pribadi Anda.
+                </p>
+              </div>
+              <div className="lg:col-span-4 flex lg:justify-end">
+                <a
+                  href={VOLUNTEER_FORM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 text-sm font-semibold rounded-lg bg-[#A3E635] text-[#0F1F17] hover:bg-[#bef264] transition-colors whitespace-nowrap shrink-0"
+                >
+                  Daftar Sebagai Relawan
+                  <ArrowUpRight className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* JEJAK POHONKU SPOTLIGHT */}
+        <section className="bg-white py-20 sm:py-28">
+          <div className="max-w-[1200px] mx-auto px-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+              <div className="lg:col-span-5 space-y-6">
+                <p className="text-sm font-medium text-[#166534]">
+                  Jejak Pohonku
+                </p>
+                <h2 className="text-3xl sm:text-4xl font-semibold leading-tight text-[#0F1F17]">
+                  Setiap Pohon Memiliki Kisah Pertumbuhan.
+                </h2>
+                <p className="text-base text-[#4E6156] leading-relaxed">
+                  Pindai QR Code pada kartu pohon atau masukkan ID Pohon Anda
+                  untuk membuka halaman pribadi, mengunggah foto saat
+                  penanaman, dan memantau perkembangan pohon.
+                </p>
+
+                <div className="flex flex-wrap items-center gap-4 pt-2">
+                  <Link
+                    to="/my-plant"
+                    className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-semibold rounded-lg bg-[#14532D] text-white hover:bg-[#166534] transition-colors whitespace-nowrap shrink-0"
+                  >
+                    Pindai QR / Cari Pohonku
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                  <Link
+                    to="/plants"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#166534] hover:text-[#0F1F17] transition-colors whitespace-nowrap shrink-0"
+                  >
+                    Katalog Jenis Pohon
+                    <ArrowUpRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+
+              <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {journeys.slice(0, 2).map((item) => (
+                  <Link
+                    key={item.record.id}
+                    to={`/plant/${item.record.plantIdCode}`}
+                    className="group rounded-2xl overflow-hidden border border-zinc-200 bg-white hover:border-[#166534] transition-colors flex flex-col"
+                  >
+                    <div className="aspect-[3/4] w-full overflow-hidden bg-zinc-100">
+                      <ResilientImage
+                        src={item.plant.mainImage}
+                        alt={item.plant.plantName}
+                        fallbackTitle={item.plant.plantName}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                    <div className="p-5 space-y-1">
+                      <p className="font-mono text-xs font-medium text-[#166534] tabular-nums">
+                        {item.record.plantIdCode}
+                      </p>
+                      <h3 className="text-xl font-semibold text-[#0F1F17]">
+                        {item.plant.plantName}
+                      </h3>
+                      <p className="text-xs text-[#4E6156] truncate">
+                        Penanam: {item.participant.fullName}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
 
       <Footer />
     </div>

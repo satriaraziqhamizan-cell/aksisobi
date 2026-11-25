@@ -19,6 +19,7 @@ export const WHATSAPP_DISPLAY = '+62 821-7997-5317';
 export const WHATSAPP_URL = 'https://wa.me/6282179975317';
 
 export const MEDIA_ASSETS = {
+  brandLogo: '/assets/aistudio/sobat_bumi_transparent_df9229fc.png',
   heroForest: '/assets/aistudio/99hu2hh16jrqyd3_93ffb906.jpeg',
   aboutCommunity: '/assets/aistudio/images__1__f4060c8d.jpeg',
   tabebuyaMain: '/assets/aistudio/Bunga-Tabebuya-Kuning-582x1024_75bbc471.webp',
@@ -27,26 +28,33 @@ export const MEDIA_ASSETS = {
     '/assets/aistudio/pngtree-farmer-planting-mango-sapling-in-rural-field-at-sunset-image_18119207_dd80273a.webp',
   nadiaPortrait: '/assets/aistudio/images__2__2a08955d.jpeg',
   growthSapling: '/assets/aistudio/iqjjefrd9amxyja_5532234b.jpeg',
+  cardFrontTemplate:
+    '/assets/aistudio/Cocard_Aksi_Sobi_9.5x13.5cm_full_bleed_9c5082ad.png',
+  cardBackTemplate:
+    '/assets/aistudio/Bagian_Belakang_Cocard_Aksi_Sobi_9.5x13.5cm_full_bleed_91f39e71.png',
 };
 
 export const CARD_TEMPLATES: CardTemplateOption[] = [
   {
     id: 'forest',
-    name: 'Forest Edition',
-    subtitle: 'Deep Forest · Portrait 54 × 85.6 mm',
-    description: 'Latar hijau hutan gelap dengan tipografi krem editorial dan QR Code di sisi belakang.',
+    name: 'Cocard Resmi 2026',
+    subtitle: 'Full Bleed · Portrait 9.5 × 13.5 cm',
+    description:
+      'Desain resmi Cocard Volunteer Aksi Sobat Bumi 2026 lengkap dengan foto, nama, prodi, dan QR Code halaman pohon.',
   },
   {
     id: 'botanical',
-    name: 'Botanical Cream',
-    subtitle: 'Soft Cream · Portrait 54 × 85.6 mm',
-    description: 'Nuansa kertas arsip botani hangat dengan bingkai halus dan komposisi foto vertikal.',
+    name: 'Cocard Resmi 2026',
+    subtitle: 'Full Bleed · Portrait 9.5 × 13.5 cm',
+    description:
+      'Desain resmi Cocard Volunteer Aksi Sobat Bumi 2026 lengkap dengan foto, nama, prodi, dan QR Code halaman pohon.',
   },
   {
     id: 'earth',
-    name: 'Earth Archive',
-    subtitle: 'Earth Brown · Portrait 54 × 85.6 mm',
-    description: 'Sentuhan warna tanah alami dengan layout minimalis untuk edisi konservasi lapangan.',
+    name: 'Cocard Resmi 2026',
+    subtitle: 'Full Bleed · Portrait 9.5 × 13.5 cm',
+    description:
+      'Desain resmi Cocard Volunteer Aksi Sobat Bumi 2026 lengkap dengan foto, nama, prodi, dan QR Code halaman pohon.',
   },
 ];
 
@@ -155,6 +163,7 @@ export const SEED_PARTICIPANTS: Participant[] = [
     id: 'part-satria',
     participantCode: 'PT-2601',
     fullName: 'Satria Raziq Hamizan',
+    studyProgram: 'Kehutanan',
     photo: MEDIA_ASSETS.satriaPortrait,
     eventId: 'evt-planting-tomorrow',
     personalMessage:
@@ -165,6 +174,7 @@ export const SEED_PARTICIPANTS: Participant[] = [
     id: 'part-nadia',
     participantCode: 'PT-2602',
     fullName: 'Nadia Putri Lestari',
+    studyProgram: 'Ilmu Lingkungan',
     photo: MEDIA_ASSETS.nadiaPortrait,
     eventId: 'evt-coastal-canopy',
     personalMessage: '',
@@ -183,7 +193,7 @@ export const SEED_PLANT_RECORDS: PlantRecord[] = [
     cardFrontPhoto: MEDIA_ASSETS.satriaPortrait,
     plantPhoto: MEDIA_ASSETS.growthSapling,
     participantPlantPhoto: MEDIA_ASSETS.satriaPortrait,
-    beginningTitle: 'Everything Starts With a Seed.',
+    beginningTitle: 'Semua Berawal dari Satu Benih.',
     beginningDescription:
       'Pukul 07.45 WIB di lereng selatan Blok C, bibit Tabebuya setinggi 55 cm ini ditanam ke dalam tanah humus gembur bersama kompos organik dan penanda kayu bernomor SB26-0001.',
     templateId: 'forest',
@@ -200,7 +210,7 @@ export const SEED_PLANT_RECORDS: PlantRecord[] = [
     cardFrontPhoto: MEDIA_ASSETS.nadiaPortrait,
     plantPhoto: '',
     participantPlantPhoto: '',
-    beginningTitle: 'Everything Starts With a Seed.',
+    beginningTitle: 'Semua Berawal dari Satu Benih.',
     beginningDescription:
       'Perjalanan tanaman ini telah terhubung dengan Plant ID SB26-0002. Dokumentasi foto Hari H dapat langsung diisi oleh peserta atau admin saat penanaman berlangsung.',
     templateId: 'botanical',

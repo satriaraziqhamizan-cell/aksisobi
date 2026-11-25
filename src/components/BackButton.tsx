@@ -24,14 +24,14 @@ export function BackButton({
 
   const styleClasses =
     variant === 'light'
-      ? 'text-[#FAF9F4]/85 hover:text-[#B4D36C] border-[#FAF9F4]/20 bg-[#14271B]/50'
-      : 'text-[#14271B]/80 hover:text-[#14271B] border-[#14271B]/15 bg-[#FAF9F4] hover:bg-white';
+      ? 'text-white/90 hover:text-white border-white/25 bg-black/25 hover:bg-black/40'
+      : 'text-[#3F5147] hover:text-[#0F1F17] border-zinc-200 bg-white hover:bg-zinc-50';
 
   return (
     <button
       type="button"
       onClick={handleBack}
-      className={`inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-md border transition-colors whitespace-nowrap shrink-0 no-print ${styleClasses}`}
+      className={`inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg border transition-colors whitespace-nowrap shrink-0 no-print ${styleClasses}`}
     >
       <ArrowLeft className="w-3.5 h-3.5" />
       <span>{label}</span>

@@ -47,6 +47,7 @@ export interface Participant {
   id: string;
   participantCode: string;
   fullName: string;
+  studyProgram?: string;
   photo: string;
   eventId: string;
   personalMessage?: string;

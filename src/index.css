@@ -1,30 +1,31 @@
 @import "tailwindcss";
 
 @theme {
-  --font-serif: "Playfair Display", Georgia, serif;
+  --font-display: "Outfit", "Plus Jakarta Sans", system-ui, sans-serif;
   --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
-  --color-deep-forest: #14271B;
-  --color-forest-green: #284B34;
-  --color-moss-green: #647C45;
-  --color-leaf-lime: #B4D36C;
-  --color-soft-cream: #F4F0E4;
-  --color-warm-white: #FAF9F4;
-  --color-earth-brown: #765A3A;
+  --color-deep-forest: #0F1F17;
+  --color-forest-green: #166534;
+  --color-moss-green: #4D7C0F;
+  --color-leaf-lime: #84CC16;
+  --color-soft-cream: #F6F8F6;
+  --color-warm-white: #FFFFFF;
+  --color-earth-brown: #57534E;
 }
 
 @layer base {
   body {
     font-family: var(--font-sans);
-    background-color: #FAF9F4;
-    color: #14271B;
+    background-color: #FFFFFF;
+    color: #0F1F17;
     overflow-x: hidden;
   }
 
   h1, h2, h3, .font-editorial {
-    font-family: var(--font-serif);
+    font-family: var(--font-display);
     text-wrap: balance;
+    letter-spacing: -0.02em;
   }
 }
 

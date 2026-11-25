@@ -1,0 +1,142 @@
+{
+  "entities": {
+    "PlantSpecies": {
+      "title": "PlantSpecies",
+      "description": "Tree species template and botanical guide for Aksi Sobat Bumi.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 80, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "plantCode": { "type": "string", "maxLength": 24 },
+        "plantName": { "type": "string", "maxLength": 100 },
+        "scientificName": { "type": "string", "maxLength": 140 },
+        "category": { "type": "string", "maxLength": 100 },
+        "mainImage": { "type": "string", "maxLength": 220000 },
+        "overview": { "type": "string", "maxLength": 1200 },
+        "characteristics": { "type": "object" },
+        "benefits": { "type": "array" },
+        "careGuide": { "type": "object" },
+        "createdAt": { "type": "string", "maxLength": 60 }
+      },
+      "required": ["id", "plantCode", "plantName", "scientificName", "category", "mainImage", "overview", "characteristics", "benefits", "careGuide", "createdAt"]
+    },
+    "EventItem": {
+      "title": "EventItem",
+      "description": "Green Action planting event.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 80, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "slug": { "type": "string", "maxLength": 120 },
+        "eventName": { "type": "string", "maxLength": 160 },
+        "eventDate": { "type": "string", "maxLength": 60 },
+        "eventLocation": { "type": "string", "maxLength": 200 },
+        "description": { "type": "string", "maxLength": 600 },
+        "fullStory": { "type": "string", "maxLength": 1600 },
+        "coverImage": { "type": "string", "maxLength": 220000 },
+        "registrationUrl": { "type": "string", "maxLength": 400 },
+        "status": { "type": "string", "enum": ["Completed", "Upcoming"] },
+        "treesPlantedTarget": { "type": "number" },
+        "volunteerCount": { "type": "number" },
+        "createdAt": { "type": "string", "maxLength": 60 }
+      },
+      "required": ["id", "slug", "eventName", "eventDate", "eventLocation", "description", "fullStory", "coverImage", "registrationUrl", "status", "treesPlantedTarget", "volunteerCount", "createdAt"]
+    },
+    "PlantJourney": {
+      "title": "PlantJourney",
+      "description": "Published participant plant journey linked to a unique Plant ID and QR code.",
+      "type": "object",
+      "properties": {
+        "plantIdCode": { "type": "string", "maxLength": 24, "pattern": "^[A-Z0-9_\\-]+$" },
+        "participantCode": { "type": "string", "maxLength": 24 },
+        "fullName": { "type": "string", "maxLength": 120 },
+        "studyProgram": { "type": "string", "maxLength": 120 },
+        "plantId": { "type": "string", "maxLength": 80 },
+        "eventId": { "type": "string", "maxLength": 80 },
+        "plantingDate": { "type": "string", "maxLength": 60 },
+        "location": { "type": "string", "maxLength": 200 },
+        "cardFrontPhoto": { "type": "string", "maxLength": 220000 },
+        "plantPhoto": { "type": "string", "maxLength": 220000 },
+        "participantPlantPhoto": { "type": "string", "maxLength": 220000 },
+        "personalMessage": { "type": "string", "maxLength": 600 },
+        "beginningTitle": { "type": "string", "maxLength": 140 },
+        "beginningDescription": { "type": "string", "maxLength": 600 },
+        "templateId": { "type": "string", "enum": ["forest", "botanical", "earth"] },
+        "status": { "type": "string", "enum": ["Published", "Draft"] },
+        "sourceFingerprint": { "type": "string", "maxLength": 160 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["plantIdCode", "participantCode", "fullName", "plantId", "eventId", "plantingDate", "location", "cardFrontPhoto", "plantPhoto", "participantPlantPhoto", "personalMessage", "beginningTitle", "beginningDescription", "templateId", "status", "sourceFingerprint", "createdAt", "updatedAt"]
+    },
+    "GrowthUpdate": {
+      "title": "GrowthUpdate",
+      "description": "Chronological plant growth milestone logged under a plant journey.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 80, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "plantRecordCode": { "type": "string", "maxLength": 24 },
+        "dayLabel": { "type": "string", "maxLength": 40 },
+        "updateDate": { "type": "string", "maxLength": 40 },
+        "photo": { "type": "string", "maxLength": 220000 },
+        "title": { "type": "string", "maxLength": 140 },
+        "description": { "type": "string", "maxLength": 600 },
+        "status": { "type": "string", "enum": ["Published"] },
+        "authorUid": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "plantRecordCode", "dayLabel", "updateDate", "photo", "title", "description", "status", "authorUid", "createdAt"]
+    },
+    "IntegrationSettings": {
+      "title": "IntegrationSettings",
+      "description": "Admin-only Google Sheet and Form auto-sync settings.",
+      "type": "object",
+      "properties": {
+        "sheetUrl": { "type": "string", "maxLength": 500 },
+        "defaultPlantId": { "type": "string", "maxLength": 80 },
+        "defaultEventId": { "type": "string", "maxLength": 80 },
+        "defaultPlantingDate": { "type": "string", "maxLength": 60 },
+        "defaultLocation": { "type": "string", "maxLength": 200 },
+        "defaultTemplateId": { "type": "string", "enum": ["forest", "botanical", "earth"] },
+        "autoSyncEnabled": { "type": "boolean" },
+        "lastSyncedAt": { "type": "string", "maxLength": 60 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["sheetUrl", "defaultPlantId", "defaultEventId", "defaultPlantingDate", "defaultLocation", "defaultTemplateId", "autoSyncEnabled", "lastSyncedAt", "updatedAt"]
+    },
+    "AdminUser": {
+      "title": "AdminUser",
+      "description": "Registered admin account metadata.",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "maxLength": 150 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/plants/{plantId}": {
+      "schema": { "$ref": "#/entities/PlantSpecies" },
+      "description": "Public plant species catalog managed by admins."
+    },
+    "/events/{eventId}": {
+      "schema": { "$ref": "#/entities/EventItem" },
+      "description": "Public Green Action planting events managed by admins."
+    },
+    "/plantJourneys/{recordCode}": {
+      "schema": { "$ref": "#/entities/PlantJourney" },
+      "description": "Published participant plant journeys keyed by Plant ID code (e.g., SB26-0001)."
+    },
+    "/plantJourneys/{recordCode}/growthUpdates/{updateId}": {
+      "schema": { "$ref": "#/entities/GrowthUpdate" },
+      "description": "Chronological growth updates for each plant journey."
+    },
+    "/settings/{settingId}": {
+      "schema": { "$ref": "#/entities/IntegrationSettings" },
+      "description": "Admin-only Google Form and Google Sheets synchronization config."
+    },
+    "/admins/{uid}": {
+      "schema": { "$ref": "#/entities/AdminUser" },
+      "description": "Trusted admin role documents."
+    }
+  }
+}
